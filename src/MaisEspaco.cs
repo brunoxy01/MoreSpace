@@ -13,6 +13,7 @@ using System.Windows.Forms;
 namespace MoreSpace {
 static class Program {
  [STAThread] static void Main(string[] args) {
+  if(args.Contains("--chart-file-test")) { Environment.Exit(ChartFileChecks.Run()); return; }
   if(args.Contains("--performance-test")) { Environment.Exit(PerformanceChecks.Run()); return; }
   if(args.Contains("--space-test")) { Environment.Exit(SpaceChecks.Run()); return; }
   if(args.Contains("--self-test")) { Environment.Exit(Checks.Run()); return; }

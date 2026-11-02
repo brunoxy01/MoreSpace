@@ -28,6 +28,17 @@ Windows 10/11 **x64**, .NET Framework 4.8 e Windows PowerShell 5.1. Baixe `MoreS
 
 O executável não tem assinatura digital comercial. Algumas alterações em entradas de inicialização de todos os usuários exigem privilégios adicionais; falhas são exibidas em Atividade.
 
+## Excluir arquivos pela pizza
+
+1. Na Home, analise uma partição ou pasta.
+2. Clique com o botão direito em uma fatia de pasta (ou na linha da lista) e escolha **Ver arquivos / excluir…**. Clicar em **Arquivos nesta pasta** também abre a lista.
+3. Marque os arquivos desejados. Somente os arquivos diretamente na pasta são listados; nenhuma subpasta é removida.
+4. Clique em **Excluir selecionados…** e revise todos os caminhos na confirmação.
+
+A exclusão é **permanente, sem Lixeira**. Antes de apagar, o app verifica novamente a pasta, o tamanho, a data e os atributos. Arquivos alterados, links, arquivos de sistema/somente leitura e locais como Windows, Program Files e ProgramData são preservados. Falhas por arquivo aparecem em Atividade. O gráfico retorna à partição atualizada; uma nova análise detalhada deve ser solicitada após a exclusão. Fatias de espaço livre, volume inteiro e o grupo “Outros” não oferecem exclusão direta.
+
+Arquivos apagados por essa opção entram no total lógico e no histórico de espaço liberado a partir da versão 2.3.
+
 ## Selecionar aplicativos
 
 1. Abra **Aplicativos → Carregar aplicativos**.

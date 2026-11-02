@@ -9,7 +9,7 @@ $sources = @(Get-ChildItem (Join-Path $PSScriptRoot 'src') -Filter '*.cs' | ForE
 & $compiler /nologo /target:winexe /optimize+ /platform:x64 "/out:$target" "/win32icon:$PSScriptRoot\assets\app.ico" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.Web.Extensions.dll @sources
 if ($LASTEXITCODE -ne 0) { throw 'Compilation failed.' }
 if (-not $SkipTests) {
-    foreach ($suite in @('--self-test', '--management-test', '--space-test', '--performance-test', '--ui-test')) {
+    foreach ($suite in @('--self-test', '--management-test', '--space-test', '--performance-test', '--chart-file-test', '--ui-test')) {
         $test = Start-Process -FilePath $target -ArgumentList $suite -PassThru -Wait
         if ($test.ExitCode -ne 0) { throw "Test failed: $suite (exit $($test.ExitCode))" }
         Write-Output "$suite passed"

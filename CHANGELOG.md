@@ -1,5 +1,13 @@
 # Histórico
 
+## 2.3.0
+
+- Menu de contexto na pizza e na lista de ocupação para revisar e excluir arquivos da pasta.
+- Seleção individual, revisão de caminhos e confirmação de exclusão permanente, sem remoção de subpastas.
+- Revalidação de arquivos antes da exclusão, proteção de locais do sistema e registro por item.
+- Arquivos excluídos pela Home incluídos no histórico de espaço liberado.
+- Testes isolados de escopo, alterações de arquivo e atributos protegidos.
+
 ## 2.2.0
 
 - Enumeração única de diretórios com metadados em cache, evitando consultas redundantes por arquivo.

@@ -34,7 +34,7 @@ partial class MainWindow {
   var brand=new Label{Text="+Espaço",Font=new Font("Segoe UI",25,FontStyle.Bold),ForeColor=blue,AutoSize=true,Location=new Point(20,26)};side.Controls.Add(brand);
 
   navigation=new FlowLayoutPanel{FlowDirection=FlowDirection.TopDown,WrapContents=false,Location=new Point(12,148),Size=new Size(178,420),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};side.Controls.Add(navigation);
-  side.Controls.Add(new Label{Text="Seu controle.\r\nUma escolha por vez.\r\n\r\nv2.2 • Local e privado",ForeColor=Color.Gray,Location=new Point(24,650),Size=new Size(160,95),Anchor=AnchorStyles.Bottom|AnchorStyles.Left});
+  side.Controls.Add(new Label{Text="Seu controle.\r\nUma escolha por vez.\r\n\r\nv2.3 • Local e privado",ForeColor=Color.Gray,Location=new Point(24,650),Size=new Size(160,95),Anchor=AnchorStyles.Bottom|AnchorStyles.Left});
  }
  void BuildNavigation(){foreach(TabPage page in tabs.TabPages){int index=tabs.TabPages.IndexOf(page);var b=new RoundedButton{Text=page.Text,Width=174,Height=48,TextAlign=ContentAlignment.MiddleLeft,Padding=new Padding(14,0,0,0),FlatStyle=FlatStyle.Flat,Margin=new Padding(0,0,0,8)};b.FlatAppearance.BorderSize=0;b.Click+=delegate{tabs.SelectedIndex=index;};navigation.Controls.Add(b);navButtons.Add(b);}tabs.SelectedIndexChanged+=delegate{UpdateNavigation();if(tabs.SelectedTab.Text=="Inicialização" && startup.Items.Count==0)LoadStartup();};UpdateNavigation();}
  void UpdateNavigation(){for(int i=0;i<navButtons.Count;i++){navButtons[i].BackColor=i==tabs.SelectedIndex?Color.FromArgb(219,236,227):Color.FromArgb(246,248,247);navButtons[i].ForeColor=i==tabs.SelectedIndex?blue:Color.FromArgb(85,95,93);navButtons[i].Font=new Font("Segoe UI",10,i==tabs.SelectedIndex?FontStyle.Bold:FontStyle.Regular);}}
