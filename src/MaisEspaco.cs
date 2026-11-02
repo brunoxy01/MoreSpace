@@ -25,7 +25,7 @@ static class Program {
   if(args.Contains("--management-test")) { Environment.Exit(ManagementChecks.Run()); return; }
   Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false);
   if(args.Contains("--ui-test")) { Environment.Exit(UiChecks.Run()); return; }
-  if(args.Length>=2 && (args[0]=="--preview" || args[0]=="--preview-demo")) {using(var form=new MainWindow(args[0]=="--preview-demo")){form.Show();if(args.Length>2)form.PreviewPage(Int32.Parse(args[2]));if(args.Length>4)form.Size=new Size(Int32.Parse(args[3]),Int32.Parse(args[4]));Application.DoEvents();using(var bitmap=new Bitmap(form.Width,form.Height)){form.DrawToBitmap(bitmap,new Rectangle(0,0,form.Width,form.Height));bitmap.Save(args[1]);}form.Close();}return;}
+  if(args.Length>=2 && (args[0]=="--preview" || args[0]=="--preview-demo")) {using(var form=new MainWindow(args[0]=="--preview-demo")){form.Show();if(args.Length>2)form.PreviewPage(Int32.Parse(args[2]));if(args.Length>4)form.Size=new Size(Int32.Parse(args[3]),Int32.Parse(args[4]));if(args.Length>5)form.PreviewTheme(Int32.Parse(args[5]));Application.DoEvents();using(var bitmap=new Bitmap(form.Width,form.Height)){form.DrawToBitmap(bitmap,new Rectangle(0,0,form.Width,form.Height));bitmap.Save(args[1]);}form.Close();}return;}
   Application.Run(new MainWindow());
  }
 }
@@ -97,7 +97,7 @@ partial class MainWindow:Form {
   SetupDuplicates();SetupRecycle();SetupUpdates();SetupMaintenance();SetupAdvancedCleanup();SetupLeftovers();SetupExternalDisks();
   var logpage=new TabPage("Atividade");report.Multiline=true;report.ReadOnly=true;report.ScrollBars=ScrollBars.Both;report.WordWrap=false;report.Dock=DockStyle.Fill;logpage.Controls.Add(report);tabs.TabPages.Add(logpage);
   timer.Interval=3000;timer.Tick+=delegate{RefreshOverview();EnsureLargeScan();if(tabs.SelectedTab.Text=="Processos" && !busy)RefreshProcesses();};if(!demoMode)timer.Start();RefreshOverview();if(!demoMode)RefreshProcesses();
-  BuildNavigation();SetupTray(); StyleLists(this);ConfigureResponsive(this);AdaptLayout(); status.Text="Pronto. Escolha uma área no menu para começar.";
+  BuildNavigation();SetupTray(); StyleLists(this);ConfigureResponsive(this);AdaptLayout();SetupAppearance(); status.Text="Pronto. Escolha uma área no menu para começar.";
   FormClosing+=delegate(object sender,FormClosingEventArgs e){if(busy){e.Cancel=true;MessageBox.Show(this,"Aguarde a operação terminar. Uma análise pode ser cancelada pelo botão Cancelar análise.");}else if(StartupDirty() && MessageBox.Show(this,"Há alterações de inicialização não aplicadas. Sair e descartar essas alterações?","+Espaço",MessageBoxButtons.YesNo,MessageBoxIcon.Question,MessageBoxDefaultButton.Button2)!=DialogResult.Yes)e.Cancel=true;};
  }
  static ListView FilesView(bool check) {var v=new SmoothListView{Dock=DockStyle.Fill,View=View.Details,CheckBoxes=check,FullRowSelect=true,HideSelection=false};v.Columns.Add("Arquivo",230);v.Columns.Add("Tamanho",110);v.Columns.Add("Modificado",150);v.Columns.Add("Caminho completo",650);return v;}

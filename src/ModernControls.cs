@@ -13,7 +13,7 @@ class RoundedButton:Button {
  public override Size GetPreferredSize(Size proposedSize){var text=TextRenderer.MeasureText(Text,Font,Size.Empty,TextFormatFlags.NoPadding|TextFormatFlags.SingleLine);return new Size(text.Width+Padding.Horizontal+28,Math.Max(38,text.Height+Padding.Vertical+12));}
  static float Ease(float value,float target){float next=value+(target-value)*0.28f;return Math.Abs(next-target)<0.015f?target:next;}
  void Animate(object sender,EventArgs e){hover=Ease(hover,inside&&Enabled?1:0);press=Ease(press,down&&Enabled?1:0);Invalidate();if(hover==(inside&&Enabled?1:0)&&press==(down&&Enabled?1:0))animation.Stop();}
- void Start(){if(IsHandleCreated&&!IsDisposed)animation.Start();}
+ void Start(){if(!AppTheme.Animate){hover=inside&&Enabled?1:0;press=down&&Enabled?1:0;Invalidate();return;}if(IsHandleCreated&&!IsDisposed)animation.Start();}
  protected override void OnMouseEnter(EventArgs e){inside=true;Start();base.OnMouseEnter(e);}
  protected override void OnMouseLeave(EventArgs e){inside=false;down=false;Start();base.OnMouseLeave(e);}
  protected override void OnMouseDown(MouseEventArgs e){if(e.Button==MouseButtons.Left){down=true;Start();}base.OnMouseDown(e);}
@@ -26,8 +26,8 @@ class RoundedButton:Button {
  protected override void OnPaint(PaintEventArgs e){
   e.Graphics.Clear(Parent==null?Color.White:Parent.BackColor);e.Graphics.SmoothingMode=SmoothingMode.AntiAlias;
   float inset=press;var rect=new RectangleF(0.75f+inset,0.75f+inset,Width-1.5f-2*inset,Height-1.5f-2*inset);
-  Color fill=Blend(BackColor,Color.FromArgb(201,226,215),hover*0.5f+press*0.3f);if(!Enabled)fill=Color.FromArgb(245,246,245);
-  using(var shape=Shape(rect,10))using(var brush=new SolidBrush(fill)){e.Graphics.FillPath(brush,shape);if(FlatAppearance.BorderSize>0)using(var pen=new Pen(FlatAppearance.BorderColor,1))e.Graphics.DrawPath(pen,shape);}
+  Color fill=Blend(BackColor,AppTheme.Selected,hover*0.5f+press*0.3f);if(!Enabled)fill=AppTheme.Surface;
+  using(var shape=Shape(rect,10))using(var brush=new SolidBrush(fill)){e.Graphics.FillPath(brush,shape);if(FlatAppearance.BorderSize>0||hover>0)using(var pen=new Pen(Blend(FlatAppearance.BorderColor,AppTheme.Accent,hover),1+hover))e.Graphics.DrawPath(pen,shape);}
   var area=new Rectangle(Padding.Left+8,(int)press,Math.Max(1,Width-Padding.Horizontal-16),Height-2);
   TextFormatFlags flags=TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis|(MultilineText?TextFormatFlags.WordBreak:TextFormatFlags.SingleLine);
   flags|=TextAlign==ContentAlignment.MiddleLeft?TextFormatFlags.Left:TextFormatFlags.HorizontalCenter;
@@ -37,5 +37,5 @@ class RoundedButton:Button {
  }
  protected override void Dispose(bool disposing){if(disposing)animation.Dispose();base.Dispose(disposing);}
 }
-class SmoothListView:ListView {public SmoothListView(){DoubleBuffered=true;SetStyle(ControlStyles.OptimizedDoubleBuffer|ControlStyles.AllPaintingInWmPaint,true);}}
+class SmoothListView:ListView {public SmoothListView(){OwnerDraw=true;DrawColumnHeader+=delegate(object sender,DrawListViewColumnHeaderEventArgs e){using(var brush=new SolidBrush(AppTheme.Surface))e.Graphics.FillRectangle(brush,e.Bounds);TextRenderer.DrawText(e.Graphics,e.Header.Text,Font,e.Bounds,AppTheme.Text,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);};DrawItem+=delegate(object sender,DrawListViewItemEventArgs e){e.DrawDefault=!AppTheme.Dark;};DrawSubItem+=delegate(object sender,DrawListViewSubItemEventArgs e){if(!AppTheme.Dark){e.DrawDefault=true;return;}Color bg=e.Item.Selected?AppTheme.Selected:AppTheme.Surface;using(var brush=new SolidBrush(bg))e.Graphics.FillRectangle(brush,e.Bounds);Color fg=e.SubItem.ForeColor;if(fg.GetBrightness()<0.55f)fg=AppTheme.Text;var bounds=e.Bounds;if(CheckBoxes&&e.ColumnIndex==0){ControlPaint.DrawCheckBox(e.Graphics,new Rectangle(bounds.Left+3,bounds.Top+6,13,13),e.Item.Checked?ButtonState.Checked:ButtonState.Normal);bounds.X+=20;bounds.Width-=20;}TextRenderer.DrawText(e.Graphics,e.SubItem.Text,Font,bounds,fg,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);};DoubleBuffered=true;SetStyle(ControlStyles.OptimizedDoubleBuffer|ControlStyles.AllPaintingInWmPaint,true);}}
 }

@@ -1,3 +1,11 @@
+# 3.1.0
+
+- Temas Sistema, Claro e Escuro com preferência persistente e atualização automática conforme o Windows.
+- Link suport us para o repositório no rodapé da navegação.
+- Bordas animadas nos módulos e botões, respeitando animações do Windows.
+- Contraste de listas, revisões e controles adaptado ao tema; testes de troca de tema e layout.
+- Novos prints demonstrativos no README.
+
 # Histórico
 
 ## 3.0.0

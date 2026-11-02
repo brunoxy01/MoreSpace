@@ -18,6 +18,16 @@ Disco, arquivos, aplicativos e manutenção do Windows em um utilitário portát
 
 ![Home: ocupação do disco e histórico de espaço](docs/screenshots/home.png)
 
+## Aparência do seu jeito
+
+Escolha **Sistema**, **Claro** ou **Escuro** no rodapé do menu. Sistema acompanha a preferência de aplicativos do Windows; a escolha fica salva para a próxima abertura. Os módulos têm bordas com transição suave ao passar o mouse, respeitando a configuração de animações do Windows. O link **suport us** abre este repositório.
+
+![Tema escuro](docs/screenshots/dark.png)
+
+![Tema claro em janela compacta](docs/screenshots/light.png)
+
+Diálogos nativos do Windows e barras de rolagem podem manter a aparência do sistema.
+
 ## O que você pode fazer
 
 | Entender | Revisar | Cuidar |
