@@ -1,0 +1,83 @@
++Espaço — versão 2.1
+
+Abra MoreSpace.exe (+Espaço). Windows 10/11 x64 e .NET Framework 4.8.
+É portátil: não precisa instalar. Não possui assinatura digital comercial.
+
+HOME E PARTIÇÕES
+Escolha uma partição para ver o gráfico de pizza de espaço usado e livre.
+Clique na fatia usada ou em Explorar pastas para analisar a ocupação por pasta.
+Depois clique em uma fatia de pasta ou dê duplo clique na lista para entrar.
+Subir nível retorna à pasta anterior; Partição volta ao gráfico usado/livre.
+Escolher pasta permite começar diretamente em qualquer diretório acessível.
+A análise pode ser cancelada; o resultado anterior será preservado.
+Partições não montadas não aparecem. Tamanhos lógicos de pastas podem diferir
+do uso físico do disco; links e itens sem acesso são ignorados e contados.
+As maiores sete entradas ganham fatias; as demais ficam agrupadas em Outros,
+mas todas permanecem acessíveis na lista para navegar.
+
+LIMPEZA E ARQUIVOS GRANDES
+A limpeza oferece temporários sem alteração/acesso registrado há 7 dias.
+Revise e marque os arquivos. A exclusão é permanente e pede confirmação.
+Datas de acesso podem ser imprecisas; antiguidade não garante inutilidade.
+Arquivos grandes (100 MB ou mais) são apenas listados para revisão no Explorer.
+O espaço disponível aparece no topo. Tamanho lógico não garante o mesmo
+volume recuperado no disco. A análise não identifica tudo que é inútil.
+
+PROCESSOS
+CPU, RAM residente, PID, sessão e caminho do executável. Busca e ordenação
+por RAM, CPU ou nome. Atualiza a cada 3 segundos enquanto a tela está aberta.
+CPU exige duas amostras e considera todos os núcleos; “—” indica indisponível.
+Alguns caminhos/dados exigem privilégios e aparecem como acesso restrito.
+Somente processos acessíveis da sua sessão podem receber fechamento.
+Processos críticos e uma lista de componentes do Windows são protegidos.
+Prefira solicitar fechamento. Forçar pode perder dados não salvos.
+Não há esvaziamento artificial de cache nem promessa de ganho de desempenho.
+
+INICIALIZAÇÃO
+Marque para habilitar; desmarque para desabilitar; clique em Aplicar alterações.
+As alterações são revisadas antes de gravar e valem para próximos logins.
+É possível reverter usando as mesmas caixas. Não desinstala nem encerra apps.
+Lê Run, Run32 e pastas Startup da sua conta e de todos os usuários.
+Altera somente os estados correspondentes em Explorer\StartupApproved.
+Esse formato interno do Windows pode variar entre versões: estados
+desconhecidos ficam somente para consulta e devem ser gerenciados no Windows.
+Entradas de máquina podem exigir administrador. Falhas ficam em Atividade;
+o programa não eleva permissões automaticamente.
+Serviços, tarefas agendadas, políticas e startup tasks de apps Store não são
+inventariados aqui. O botão Configurações do Windows oferece controles extras.
+Aplicativos e políticas podem recriar ou alterar configurações posteriormente.
+Antes de gravar, salva o estado anterior em:
+%LOCALAPPDATA%\MaisEspaco\Backups
+Os backups JSON são registros para recuperação técnica, não instaladores.
+
+APLICATIVOS
+Lista pacotes Microsoft Store/Appx da sua conta, incluindo muitos apps que
+vêm com o Windows. O filtro Apps Microsoft facilita encontrá-los, mas não
+comprova que foram instalados de fábrica. Nomes amigáveis vêm do menu Iniciar;
+pacotes sem nome disponível usam o identificador. Passe o mouse para detalhes.
+A remoção usa Remove-AppxPackage para o pacote exato e sua conta somente.
+Pede confirmação e revalida a proteção antes de remover. Frameworks,
+pacotes não removíveis e componentes essenciais conhecidos são protegidos.
+O Windows pode recusar outras remoções por dependências ou políticas.
+Dados locais do app podem ser perdidos. Reinstalação depende da Store ou
+do instalador. Não remove provisionamento para futuras contas do computador.
+Programas tradicionais e utilitários do fabricante: botão Programas
+tradicionais abre a desinstalação oficial nas Configurações do Windows.
+Permite selecionar vários apps. O lote é revisado antes de confirmar; a remoção ocorre um por vez, com opção de parar após o atual.
+
+ATIVIDADE E PRIVACIDADE
+Registros locais em %LOCALAPPDATA%\MaisEspaco\Relatorios.
+Contêm caminhos e nomes de programas; revise antes de compartilhar.
+Não há telemetria ou atualização automática no +Espaço.
+
+VALIDAÇÃO
+build.ps1 compila e executa os testes. --self-test verifica o scanner.
+--management-test testa o estado de inicialização em chaves fictícias isoladas
+em Software\MaisEspaco\Tests e consulta aplicativos sem removê-los.
+Nenhum app real foi desinstalado e nenhuma inicialização real foi alterada
+na validação desta versão. A compatibilidade não foi testada em todos os PCs.
+
+REFERÊNCIAS MICROSOFT
+https://support.microsoft.com/en-us/windows/experience/startup-boot/configure-startup-applications-in-windows
+https://learn.microsoft.com/en-us/powershell/module/appx/remove-appxpackage
+https://learn.microsoft.com/en-us/windows/win32/setupapi/run-and-runonce-registry-keys
