@@ -1,4 +1,4 @@
-+Espaço — versão 2.2
++Espaço — versão 2.3
 
 Abra MoreSpace.exe (+Espaço). Windows 10/11 x64 e .NET Framework 4.8.
 É portátil: não precisa instalar. Não possui assinatura digital comercial.
@@ -90,3 +90,10 @@ REFERÊNCIAS MICROSOFT
 https://support.microsoft.com/en-us/windows/experience/startup-boot/configure-startup-applications-in-windows
 https://learn.microsoft.com/en-us/powershell/module/appx/remove-appxpackage
 https://learn.microsoft.com/en-us/windows/win32/setupapi/run-and-runonce-registry-keys
+
+EXCLUIR PELA PIZZA
+Após analisar uma pasta, botão direito na fatia ou linha > Ver arquivos / excluir.
+Marque arquivos e revise a confirmação. Exclusão permanente, sem Lixeira.
+Somente arquivos diretos; nenhuma subpasta é removida. Locais protegidos,
+links e arquivos alterados desde a leitura são preservados. A Home registra
+os arquivos excluídos no total lógico e histórico desde a versão 2.3.
