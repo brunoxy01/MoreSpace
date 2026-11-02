@@ -1,5 +1,10 @@
 # Histórico
 
+## 2.4.1
+
+- Corrige `ObjectDisposedException` em `ContextMenuStrip` ao usar o menu da pizza/lista: o menu permanece válido durante a vida da janela e não é descartado no evento Closed.
+- Teste de regressão com 30 ciclos de abertura/fechamento, troca de controle de origem, acionamento de opções e descarte ao fechar a janela.
+
 ## 2.4.0
 
 - Arquivos grandes inicia a busca automaticamente nos discos locais ao abrir a tela, com resultados progressivos e ordenação final por tamanho.
