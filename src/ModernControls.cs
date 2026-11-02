@@ -6,6 +6,7 @@ using System.Windows.Forms;
 namespace MoreSpace {
 /// <summary>Native keyboard-accessible button with a short hover/press animation.</summary>
 class RoundedButton:Button {
+ public bool MultilineText;
  readonly Timer animation=new Timer{Interval=15};
  float hover,press; bool inside,down;
  public RoundedButton(){SetStyle(ControlStyles.UserPaint|ControlStyles.AllPaintingInWmPaint|ControlStyles.OptimizedDoubleBuffer|ControlStyles.ResizeRedraw,true);FlatStyle=FlatStyle.Flat;FlatAppearance.BorderSize=0;Cursor=Cursors.Hand;animation.Tick+=Animate;}
@@ -28,7 +29,7 @@ class RoundedButton:Button {
   Color fill=Blend(BackColor,Color.FromArgb(201,226,215),hover*0.5f+press*0.3f);if(!Enabled)fill=Color.FromArgb(245,246,245);
   using(var shape=Shape(rect,10))using(var brush=new SolidBrush(fill)){e.Graphics.FillPath(brush,shape);if(FlatAppearance.BorderSize>0)using(var pen=new Pen(FlatAppearance.BorderColor,1))e.Graphics.DrawPath(pen,shape);}
   var area=new Rectangle(Padding.Left+8,(int)press,Math.Max(1,Width-Padding.Horizontal-16),Height-2);
-  TextFormatFlags flags=TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis|TextFormatFlags.SingleLine;
+  TextFormatFlags flags=TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis|(MultilineText?TextFormatFlags.WordBreak:TextFormatFlags.SingleLine);
   flags|=TextAlign==ContentAlignment.MiddleLeft?TextFormatFlags.Left:TextFormatFlags.HorizontalCenter;
   if(!ShowKeyboardCues)flags|=TextFormatFlags.HidePrefix;
   TextRenderer.DrawText(e.Graphics,Text,Font,area,Enabled?ForeColor:Color.Gray,flags);

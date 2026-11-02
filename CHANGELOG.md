@@ -1,5 +1,12 @@
 # Histórico
 
+## 2.4.0
+
+- Arquivos grandes inicia a busca automaticamente nos discos locais ao abrir a tela, com resultados progressivos e ordenação final por tamanho.
+- Seleção e exclusão revisada de arquivos grandes, integrada ao histórico.
+- Cartão de espaço liberado com cantos arredondados e animações de hover/clique.
+- Suporte a caminhos longos no runtime e manifesto; teste com caminhos acima de 260 caracteres.
+
 ## 2.3.0
 
 - Menu de contexto na pizza e na lista de ocupação para revisar e excluir arquivos da pasta.

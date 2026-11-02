@@ -1,4 +1,4 @@
-+Espaço — versão 2.3
++Espaço — versão 2.4
 
 Abra MoreSpace.exe (+Espaço). Windows 10/11 x64 e .NET Framework 4.8.
 É portátil: não precisa instalar. Não possui assinatura digital comercial.
@@ -96,4 +96,9 @@ Após analisar uma pasta, botão direito na fatia ou linha > Ver arquivos / excl
 Marque arquivos e revise a confirmação. Exclusão permanente, sem Lixeira.
 Somente arquivos diretos; nenhuma subpasta é removida. Locais protegidos,
 links e arquivos alterados desde a leitura são preservados. A Home registra
-os arquivos excluídos no total lógico e histórico desde a versão 2.3.
+os arquivos excluídos no total lógico e histórico desde a versão 2.4.
+ARQUIVOS GRANDES (2.4)
+Busca automática ao abrir, em discos locais fixos, para arquivos a partir de 100 MB.
+Resultados progressivos; ordenação final do maior para o menor. Marque arquivos
+e use Excluir marcados para revisar e confirmar a exclusão permanente.
+A versão 2.4 também corrige caminhos longos e arredonda/anima o cartão do histórico.

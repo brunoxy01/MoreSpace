@@ -13,6 +13,10 @@ using System.Windows.Forms;
 namespace MoreSpace {
 static class Program {
  [STAThread] static void Main(string[] args) {
+  AppContext.SetSwitch("Switch.System.IO.UseLegacyPathHandling",false);
+  AppContext.SetSwitch("Switch.System.IO.BlockLongPaths",false);
+  if(args.Contains("--long-path-test")) { Environment.Exit(LongPathChecks.Run()); return; }
+  if(args.Contains("--large-test")) { Environment.Exit(LargeChecks.Run()); return; }
   if(args.Contains("--chart-file-test")) { Environment.Exit(ChartFileChecks.Run()); return; }
   if(args.Contains("--performance-test")) { Environment.Exit(PerformanceChecks.Run()); return; }
   if(args.Contains("--space-test")) { Environment.Exit(SpaceChecks.Run()); return; }
@@ -84,14 +88,13 @@ partial class MainWindow:Form {
   bar.Controls.Add(Btn("Selecionar todos",delegate{foreach(ListViewItem i in temps.Items)i.Checked=true;}));bar.Controls.Add(Btn("Desmarcar",delegate{foreach(ListViewItem i in temps.Items)i.Checked=false;}));
   clean=Btn("Excluir selecionados",async delegate{await Clean();});bar.Controls.Add(clean);cancel=Btn("Cancelar análise",delegate{if(cts!=null)cts.Cancel();});cancel.Enabled=false;bar.Controls.Add(cancel);
   tp.Controls.Add(bar,0,1);tp.Controls.Add(temps,0,2);selection.Dock=DockStyle.Fill;selection.Text="Nenhum arquivo selecionado.";tp.Controls.Add(selection,0,3); temps.ItemChecked+=delegate{BeginInvoke((Action)UpdateSelection);};temps.DoubleClick+=delegate{Reveal(temps);};
-  var lp=Page("Arquivos grandes","Escolha uma pasta. Lista arquivos a partir de 100 MB; tamanho não significa que um arquivo seja inútil. Duplo clique mostra no Explorer.");
-  var lb=new FlowLayoutPanel{Dock=DockStyle.Fill};scanLarge=Btn("Escolher pasta e analisar",async delegate{await Scan(false);});lb.Controls.Add(scanLarge);lb.Controls.Add(Btn("Mostrar no Explorer",delegate{Reveal(large);}));lp.Controls.Add(lb,0,1);lp.Controls.Add(large,0,2);large.DoubleClick+=delegate{Reveal(large);};
+  SetupLargeFiles();
   var rp=Page("Processos","Consumo ao vivo a cada 3 segundos. CPU relativa ao total de núcleos; a primeira leitura precisa de uma segunda amostra.");
   var rb=new FlowLayoutPanel{Dock=DockStyle.Fill};rb.Controls.Add(Btn("Atualizar processos",delegate{RefreshProcesses();}));rb.Controls.Add(Btn("Solicitar fechamento",delegate{CloseProcess(false);}));rb.Controls.Add(Btn("Forçar encerramento…",delegate{CloseProcess(true);}));rp.Controls.Add(rb,0,1);
   SetupProcesses(rp,rb);
   SetupStartup(); SetupApps();
   var logpage=new TabPage("Atividade");report.Multiline=true;report.ReadOnly=true;report.ScrollBars=ScrollBars.Both;report.WordWrap=false;report.Dock=DockStyle.Fill;logpage.Controls.Add(report);tabs.TabPages.Add(logpage);
-  timer.Interval=3000;timer.Tick+=delegate{RefreshOverview();if(tabs.SelectedTab.Text=="Processos" && !busy)RefreshProcesses();};if(!demoMode)timer.Start();RefreshOverview();if(!demoMode)RefreshProcesses();
+  timer.Interval=3000;timer.Tick+=delegate{RefreshOverview();EnsureLargeScan();if(tabs.SelectedTab.Text=="Processos" && !busy)RefreshProcesses();};if(!demoMode)timer.Start();RefreshOverview();if(!demoMode)RefreshProcesses();
   BuildNavigation(); StyleLists(this); status.Text="Pronto. Escolha uma área no menu para começar.";
   FormClosing+=delegate(object sender,FormClosingEventArgs e){if(busy){e.Cancel=true;MessageBox.Show(this,"Aguarde a operação terminar. Uma análise pode ser cancelada pelo botão Cancelar análise.");}else if(StartupDirty() && MessageBox.Show(this,"Há alterações de inicialização não aplicadas. Sair e descartar essas alterações?","+Espaço",MessageBoxButtons.YesNo,MessageBoxIcon.Question,MessageBoxDefaultButton.Button2)!=DialogResult.Yes)e.Cancel=true;};
  }

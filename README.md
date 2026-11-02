@@ -39,6 +39,14 @@ A exclusão é **permanente, sem Lixeira**. Antes de apagar, o app verifica nova
 
 Arquivos apagados por essa opção entram no total lógico e no histórico de espaço liberado a partir da versão 2.3.
 
+## Arquivos grandes
+
+Ao abrir a tela, o app busca automaticamente arquivos de pelo menos 100 MB nos discos locais fixos acessíveis. Os resultados aparecem durante a leitura; ao concluir, são ordenados do maior para o menor. A busca não inclui unidades de rede nem discos removíveis, não percorre links e pode ignorar locais sem permissão. É possível cancelar e manter os resultados parciais.
+
+Marque arquivos e clique em **Excluir marcados…** para revisar a seleção e confirmar a exclusão permanente. Arquivos protegidos ficam cinza. O total excluído entra no histórico. Use **Buscar novamente** para atualizar os resultados; voltar à tela não reinicia uma busca já iniciada nesta sessão.
+
+O executável 2.4 declara suporte a caminhos longos e desativa o tratamento legado de caminhos do .NET Framework; os testes incluem caminhos acima de 260 caracteres, sem alterar o Registro do computador.
+
 ## Selecionar aplicativos
 
 1. Abra **Aplicativos → Carregar aplicativos**.

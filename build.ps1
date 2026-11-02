@@ -6,10 +6,10 @@ New-Item -ItemType Directory -Force $dist | Out-Null
 # Keep the file name ASCII so both Windows PowerShell 5 and PowerShell 7 can build.
 $target = Join-Path $dist 'MoreSpace.exe'
 $sources = @(Get-ChildItem (Join-Path $PSScriptRoot 'src') -Filter '*.cs' | ForEach-Object FullName)
-& $compiler /nologo /target:winexe /optimize+ /platform:x64 "/out:$target" "/win32icon:$PSScriptRoot\assets\app.ico" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.Web.Extensions.dll @sources
+& $compiler /nologo /target:winexe /optimize+ /platform:x64 "/out:$target" "/win32icon:$PSScriptRoot\assets\app.ico" "/win32manifest:$PSScriptRoot\src\app.manifest" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.Web.Extensions.dll @sources
 if ($LASTEXITCODE -ne 0) { throw 'Compilation failed.' }
 if (-not $SkipTests) {
-    foreach ($suite in @('--self-test', '--management-test', '--space-test', '--performance-test', '--chart-file-test', '--ui-test')) {
+    foreach ($suite in @('--self-test', '--management-test', '--space-test', '--performance-test', '--chart-file-test', '--large-test', '--long-path-test', '--ui-test')) {
         $test = Start-Process -FilePath $target -ArgumentList $suite -PassThru -Wait
         if ($test.ExitCode -ne 0) { throw "Test failed: $suite (exit $($test.ExitCode))" }
         Write-Output "$suite passed"
