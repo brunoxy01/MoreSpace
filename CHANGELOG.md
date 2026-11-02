@@ -1,5 +1,16 @@
 # Histórico
 
+## 3.0.0
+
+- Layout adaptável a partir de 820×650, menu rolável, barras de ações com quebra de linha e Home empilhada em janelas estreitas.
+- Duplicados por tamanho/SHA-256, identidade de arquivo e preservação de uma cópia revalidada.
+- Lixeira como padrão para arquivos revisados, consulta por unidade e abertura para restauração.
+- Caches conhecidos com bloqueio de aplicativos em execução; revisão manual de dados em AppData.
+- Atualizações via winget/Store e ferramentas oficiais de revisão do Windows.
+- Metadados em discos removíveis, solicitação de ejeção, bandeja e análise periódica opcional durante a sessão.
+- Galeria de sete capturas demonstrativas, README renovado, matriz de recursos/limites, guia de contribuição e formulários de issues.
+- Testes de novos recursos e de redimensionamento; atualização das actions de CI.
+
 ## 2.4.1
 
 - Corrige `ObjectDisposedException` em `ContextMenuStrip` ao usar o menu da pizza/lista: o menu permanece válido durante a vida da janela e não é descartado no evento Closed.

@@ -1,106 +1,111 @@
+<div align="center">
+
+<img src="assets/logo.png" width="112" alt="HD com símbolo +, logo do +Espaço">
+
 # +Espaço
 
-<img src="assets/logo.png" width="104" alt="Ícone do +Espaço">
+### Seu PC, mais leve. Suas escolhas, mais claras.
 
-Aplicativo portátil para Windows, em português, para revisar espaço em disco, processos, inicialização e aplicativos instalados.
+Disco, arquivos, aplicativos e manutenção do Windows em um utilitário portátil, em português.
 
-[Baixar a versão mais recente](https://github.com/brunoxy01/MoreSpace/releases/latest)
+[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011%20x64-216956?style=flat-square)](#começar)
+[![Release](https://img.shields.io/github/v/release/brunoxy01/MoreSpace?style=flat-square&color=216956)](https://github.com/brunoxy01/MoreSpace/releases/latest)
+[![Build](https://github.com/brunoxy01/MoreSpace/actions/workflows/build.yml/badge.svg)](https://github.com/brunoxy01/MoreSpace/actions/workflows/build.yml)
 
-![Home com dados demonstrativos](docs/home.png)
+**[Baixar para Windows](https://github.com/brunoxy01/MoreSpace/releases/latest/download/MoreSpace.exe)** · [Ver versões](https://github.com/brunoxy01/MoreSpace/releases) · [Recursos e limites](docs/FEATURES.md) · [Relatar problema](https://github.com/brunoxy01/MoreSpace/issues/new/choose)
 
-## O que faz
+</div>
 
-- Home com gráfico de pizza de espaço usado/livre para cada partição montada e acessível.
-- Índice em memória: a primeira análise lê a árvore uma vez; entrar e voltar em subpastas reaproveita o resultado. O horário da leitura fica visível e **Atualizar** força uma nova análise.
-- Indicador de espaço liberado no topo, com histórico persistente de limpezas e remoções de aplicativos. Clique no indicador para ver os detalhes.
-- Exploração por pasta: clique na fatia usada para analisar o disco; depois clique em uma pasta no gráfico ou dê duplo clique na lista para descer um nível. Use **Subir nível** para voltar e **Cancelar** para interromper a leitura.
-- Analisa temporários antigos e permite excluir somente os arquivos selecionados.
-- Localiza arquivos grandes para revisão no Explorer.
-- Mostra processos, CPU, RAM, PID e caminho do executável, com busca e ordenação.
-- Habilita ou desabilita entradas de inicialização reconhecidas, após revisão.
-- Permite marcar vários aplicativos Store/Appx, filtrar sem perder a seleção e revisar o lote antes de remover.
-- Protege componentes essenciais conhecidos e registra resultados por aplicativo.
-- Usa botões arredondados, feedback animado ao passar o mouse/clicar e listas com desenho em buffer para reduzir cintilação.
+![Home: ocupação do disco e histórico de espaço](docs/screenshots/home.png)
 
-## Executar
+## O que você pode fazer
 
-Windows 10/11 **x64**, .NET Framework 4.8 e Windows PowerShell 5.1. Baixe `MoreSpace.exe` em Releases e abra. A janela e os metadados usam o nome **+Espaço**. Não é necessário instalar.
+| Entender | Revisar | Cuidar |
+|:---|:---|:---|
+| Pizza por partição e navegação por pasta | Arquivos grandes e duplicados por conteúdo | Inicialização do Windows |
+| Índice para navegar sem reler o disco | Caches com categorias explícitas | Atualizações via winget e Store |
+| Processos, CPU, RAM e caminhos | Aplicativos Store e dados de apps | Ferramentas oficiais de manutenção |
+| Histórico persistente de operações | Lixeira por unidade e restauração no Explorer | Discos removíveis e análise periódica opcional |
 
-O executável não tem assinatura digital comercial. Algumas alterações em entradas de inicialização de todos os usuários exigem privilégios adicionais; falhas são exibidas em Atividade.
+**Você revisa antes de remover.** Arquivos pessoais usam a Lixeira por padrão. A exclusão permanente é uma opção explícita; arquivos protegidos e alterados desde a leitura são preservados. A limpeza de temporários mantém sua confirmação de exclusão permanente.
 
-## Excluir arquivos pela pizza
+## Interface que acompanha a janela
 
-1. Na Home, analise uma partição ou pasta.
-2. Clique com o botão direito em uma fatia de pasta (ou na linha da lista) e escolha **Ver arquivos / excluir…**. Clicar em **Arquivos nesta pasta** também abre a lista.
-3. Marque os arquivos desejados. Somente os arquivos diretamente na pasta são listados; nenhuma subpasta é removida.
-4. Clique em **Excluir selecionados…** e revise todos os caminhos na confirmação.
+O menu pode rolar, as barras de ações se reorganizam em linhas e a Home empilha o gráfico e a lista em janelas estreitas. Botões e cartões usam cantos arredondados e feedback suave ao interagir.
 
-A exclusão é **permanente, sem Lixeira**. Antes de apagar, o app verifica novamente a pasta, o tamanho, a data e os atributos. Arquivos alterados, links, arquivos de sistema/somente leitura e locais como Windows, Program Files e ProgramData são preservados. Falhas por arquivo aparecem em Atividade. O gráfico retorna à partição atualizada; uma nova análise detalhada deve ser solicitada após a exclusão. Fatias de espaço livre, volume inteiro e o grupo “Outros” não oferecem exclusão direta.
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/compacto.png" alt="Home em janela de 900 por 780 pixels"><br><b>Janela compacta</b></td>
+    <td width="50%"><img src="docs/screenshots/aplicativos.png" alt="Seleção de aplicativos"><br><b>Aplicativos sob controle</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/duplicados.png" alt="Duplicados agrupados com uma cópia preservada"><br><b>Duplicados com uma cópia preservada</b></td>
+    <td><img src="docs/screenshots/lixeira.png" alt="Ocupação da Lixeira por unidade"><br><b>Lixeira e restauração</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/caches.png" alt="Categorias de caches"><br><b>Limpeza por categoria</b></td>
+    <td><img src="docs/screenshots/revisao.png" alt="Ferramentas de revisão do Windows"><br><b>Revisão do Windows</b></td>
+  </tr>
+</table>
 
-Arquivos apagados por essa opção entram no total lógico e no histórico de espaço liberado a partir da versão 2.3.
+*Capturas da interface real com dados demonstrativos. Não exibem arquivos nem programas pessoais. Tamanhos e resultados ilustrativos não são uma promessa de espaço recuperável.*
 
-## Arquivos grandes
+## Começar
 
-Ao abrir a tela, o app busca automaticamente arquivos de pelo menos 100 MB nos discos locais fixos acessíveis. Os resultados aparecem durante a leitura; ao concluir, são ordenados do maior para o menor. A busca não inclui unidades de rede nem discos removíveis, não percorre links e pode ignorar locais sem permissão. É possível cancelar e manter os resultados parciais.
+1. Baixe **MoreSpace.exe** na [última versão](https://github.com/brunoxy01/MoreSpace/releases/latest).
+2. Feche uma versão anterior, se estiver aberta, e execute o arquivo. Não há instalação.
+3. Use **Home** para entender a ocupação ou **Arquivos grandes** para buscar arquivos a partir de 100 MB.
+4. Revise as seleções. Consulte **Atividade** e o histórico para ver o resultado.
 
-Marque arquivos e clique em **Excluir marcados…** para revisar a seleção e confirmar a exclusão permanente. Arquivos protegidos ficam cinza. O total excluído entra no histórico. Use **Buscar novamente** para atualizar os resultados; voltar à tela não reinicia uma busca já iniciada nesta sessão.
+Requisitos: **Windows 10/11 x64, .NET Framework 4.8 e Windows PowerShell 5.1**. Atualizações de apps exigem o winget/App Installer. Algumas ferramentas oficiais pedem administrador. O executável não tem assinatura digital comercial.
 
-O executável 2.4 declara suporte a caminhos longos e desativa o tratamento legado de caminhos do .NET Framework; os testes incluem caminhos acima de 260 caracteres, sem alterar o Registro do computador.
+## Novidades da 3.0
 
-## Selecionar aplicativos
+- **Duplicados:** tamanho e SHA-256 completo; ignora hard links repetidos e conteúdo somente na nuvem, preservando uma cópia.
+- **Lixeira:** envio como padrão para arquivos pessoais, consulta por disco e restauração no Explorer.
+- **Caches:** categorias de navegador, VS Code, npm e relatórios de falha; apps abertos ficam bloqueados.
+- **Atualizações e revisão:** winget/Store, DNS, verificação de disco, otimização, indexação e DISM por ferramentas oficiais.
+- **Dados de apps e discos externos:** revisão manual de AppData, metadados conhecidos em removíveis e solicitação de ejeção.
+- **Bandeja e análise periódica:** acesso rápido e agendamento opcional durante a sessão, sem exclusão automática.
+- **Layout adaptável e documentação visual:** janelas estreitas, capturas e formulários de issues.
 
-1. Abra **Aplicativos → Carregar aplicativos**.
-2. Marque programas individualmente ou use **Selecionar visíveis**. Componentes protegidos não podem ser marcados.
-3. A seleção permanece ao pesquisar ou trocar o filtro; o rodapé mostra quantos selecionados estão fora do filtro.
-4. Clique em **Desinstalar selecionados…** e revise todos os nomes e pacotes na confirmação.
-5. A remoção acontece um aplicativo por vez. **Parar após o atual** preserva os próximos da fila. Falhas e itens não iniciados continuam selecionados.
+Veja o [histórico completo](CHANGELOG.md) e a [matriz de recursos e diferenças](docs/FEATURES.md).
 
-Remover aplicativos pode apagar seus dados locais. O app usa `Remove-AppxPackage` apenas para a conta atual, não remove provisionamento para futuras contas e não garante que todo pacote seja removível. Programas tradicionais são gerenciados pelo botão que abre as Configurações do Windows.
+## Espaço liberado, sem números inventados
 
-O filtro Microsoft não comprova instalação de fábrica. O programa não consegue determinar automaticamente tudo que é inútil nem garante uma quantidade de espaço ou RAM recuperada. A limpeza de temporários é permanente; revise os caminhos antes de confirmar. RAM é liberada ao fechar aplicativos, sem esvaziamento artificial de cache.
+O total lógico soma arquivos excluídos permanentemente pelo +Espaço. Itens enviados à Lixeira **continuam ocupando espaço** e não entram nesse total. O histórico separa a variação do espaço livre antes/depois, que também sofre influência de outros programas. Desinstalações não recebem tamanho presumido.
 
-A primeira leitura de um disco inteiro pode demorar. A distribuição por pastas soma tamanhos lógicos dos arquivos acessíveis e ignora links, portanto pode diferir do espaço físico usado. Entradas inacessíveis são contadas, e pastas com falhas são identificadas como parciais. O gráfico de partição usa os totais informados pelo Windows; partições não montadas não são exibidas.
+O índice é uma fotografia da análise. Navegar reaproveita essa leitura; **Atualizar** busca mudanças externas. O app não determina sozinho o que é inútil nem promete acelerar o computador. Veja [proteções e limitações](docs/FEATURES.md#proteção-e-contabilidade).
 
-O índice é uma fotografia da análise, mantida nesta sessão, e não um monitor em tempo real. Limpezas/remoções feitas pelo app invalidam o índice. Mudanças externas exigem **Atualizar**; fechar o app descarta o índice.
+## Compilar e verificar
 
-O total de espaço liberado soma tamanhos lógicos de temporários efetivamente excluídos, **a partir da versão 2.2**, sem estimar operações antigas. O histórico mostra separadamente a variação do espaço livre antes/depois nos discos fixos; essa variação inclui atividade de outros programas e pode ser negativa. Remoções de aplicativos registram a variação observada, não um tamanho de pacote presumido. O histórico fica em `%LOCALAPPDATA%\MaisEspaco\Historico` e é carregado uma vez ao abrir o app, sem analisar o disco para exibir o total.
-
-![Seleção de aplicativos com dados demonstrativos](docs/interface.png)
-
-## Compilar e testar
-
-Não é necessário instalar o SDK do .NET. No PowerShell, a partir da raiz do repositório:
+No Windows, abra o PowerShell na raiz:
 
 ```powershell
 .\build.ps1
 ```
 
-O script usa o compilador do .NET Framework instalado no Windows, gera `dist/MoreSpace.exe` com o ícone embutido e executa:
+O compilador do .NET Framework gera `dist/MoreSpace.exe`, com logo e manifesto embutidos, e executa testes isolados de scanner, cancelamento, seleção, caminhos longos, índice, histórico, duplicados e interface.
 
-- `--self-test`: scanner, cancelamento e validação de temporários em pasta de teste.
-- `--management-test`: estados de inicialização em chaves fictícias isoladas e inventário somente leitura de pacotes.
-- `--space-test`: soma de tamanhos, navegação em subpastas e cancelamento em uma árvore de arquivos fictícia.
-- `--performance-test`: índice, cancelamento, atualização, histórico persistente e benchmark sintético com 3.000 arquivos; gera `dist/benchmark.txt`. Tempos locais são sensíveis ao cache do Windows, não uma promessa para discos inteiros.
-- `--ui-test`: seleção individual/global, bloqueio de protegidos, persistência ao filtrar e limpeza da seleção com dados fictícios.
-
-Esses testes **não desinstalam aplicativos reais nem alteram entradas reais de inicialização**. A desinstalação real e a aparência em todas as escalas de DPI ainda dependem de validação em cada ambiente.
-
-Para gerar a imagem demonstrativa da documentação:
+Os testes **não desinstalam apps pessoais, não esvaziam sua Lixeira, não atualizam programas nem executam manutenção do sistema**. Testes de remoção usam arquivos fictícios. As telas são verificadas em 820×650, 1024×768 e 1360×860; não há cobertura de todas as configurações de DPI.
 
 ```powershell
-.\dist\MoreSpace.exe --preview-demo "$PWD\docs\home.png" 0
-.\dist\MoreSpace.exe --preview-demo "$PWD\docs\interface.png" 5
+# Interface real com dados demonstrativos
+.\dist\MoreSpace.exe --preview-demo "$PWD\docs\screenshots\home.png" 0 1360 860
+.\dist\MoreSpace.exe --preview-demo "$PWD\docs\screenshots\compacto.png" 0 900 780
 ```
 
-## Estrutura
+## Por dentro do projeto
 
-- `src/`: interface Windows Forms, scanner, gerenciadores e testes.
-- `assets/`: logo PNG, ícone ICO em sete resoluções e conversor de formato.
-- `docs/GUIA.txt`: funcionamento, limites e referências técnicas.
-- `.github/workflows/build.yml`: compilação e testes no Windows.
+| Pasta | Conteúdo |
+|---|---|
+| `src/` | Interface, scanners, proteções, ferramentas e testes |
+| `assets/` | Logo PNG, ícone ICO em sete resoluções e conversor |
+| `docs/` | Recursos, limites, guia e capturas |
+| `.github/` | Build automático e formulários para bugs e sugestões |
 
-Registros e backups ficam em `%LOCALAPPDATA%\MaisEspaco`. O app não envia telemetria. Revise os logs antes de compartilhar, pois contêm caminhos e nomes de programas.
+Dados locais: `%LOCALAPPDATA%\MaisEspaco`. O app não envia telemetria. winget e Store usam suas próprias conexões quando acionados. Revise caminhos e nomes pessoais antes de publicar logs.
 
-## Identidade visual
+**[Como contribuir](CONTRIBUTING.md)** · **[Identidade visual](assets/LOGO.md)** · **[Guia de recursos](docs/FEATURES.md)**
 
-A logo foi criada com a ferramenta integrada de geração de imagens. O [brief de geração](assets/LOGO.md) acompanha o PNG original. O arquivo `app.ico` contém tamanhos de 16 a 256 pixels e pode ser reconstruído com `assets/Build-Icon.ps1`.
+<div align="center"><sub>+Espaço / MoreSpace · Utilitário independente para Windows · Interface em português</sub></div>

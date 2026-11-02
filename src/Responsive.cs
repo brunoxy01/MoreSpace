@@ -1,0 +1,14 @@
+using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+namespace MoreSpace {
+partial class MainWindow {
+ bool adapting;TableLayoutPanel homeContent;
+ void ConfigureResponsive(Control root){foreach(Control c in root.Controls){var flow=c as FlowLayoutPanel;if(flow!=null&&flow!=navigation){flow.WrapContents=true;flow.AutoScroll=false;flow.AutoSize=true;flow.AutoSizeMode=AutoSizeMode.GrowAndShrink;flow.MinimumSize=new Size(0,42);var table=flow.Parent as TableLayoutPanel;if(table!=null){int row=table.GetRow(flow);if(row>=0&&row<table.RowStyles.Count)table.RowStyles[row].SizeType=SizeType.AutoSize;if(table.Parent is TableLayoutPanel){table.AutoSize=true;var outer=(TableLayoutPanel)table.Parent;int outerRow=outer.GetRow(table);if(outerRow>=0&&outerRow<outer.RowStyles.Count)outer.RowStyles[outerRow].SizeType=SizeType.AutoSize;}}}ConfigureResponsive(c);}}
+ void AdaptLayout(){if(adapting||shell==null||navigation==null)return;adapting=true;try{int width=ClientSize.Width<1100?154:200;shell.ColumnStyles[0].Width=width;brand.Font=new Font("Segoe UI",width<180?20:25,FontStyle.Bold);brand.Left=width<180?12:20;navigation.SetBounds(7,100,width-14,Math.Max(80,ClientSize.Height-115));foreach(var button in navButtons){button.Width=width-34;button.Padding=new Padding(width<180?3:12,0,0,0);button.Font=new Font("Segoe UI",width<180?9:10,button.Font.Style);}workspace.Padding=new Padding(ClientSize.Width<1100?12:24,12,ClientSize.Width<1100?12:24,10);
+  if(homeContent!=null){bool narrow=ClientSize.Width<1000;homeContent.SuspendLayout();homeContent.ColumnCount=narrow?1:2;homeContent.RowCount=narrow?2:1;homeContent.ColumnStyles.Clear();homeContent.RowStyles.Clear();if(narrow){homeContent.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));homeContent.RowStyles.Add(new RowStyle(SizeType.Percent,55));homeContent.RowStyles.Add(new RowStyle(SizeType.Percent,45));homeContent.SetCellPosition(pie,new TableLayoutPanelCellPosition(0,0));homeContent.SetCellPosition(distribution,new TableLayoutPanelCellPosition(0,1));}else{homeContent.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,42));homeContent.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,58));homeContent.RowStyles.Add(new RowStyle(SizeType.Percent,100));homeContent.SetCellPosition(distribution,new TableLayoutPanelCellPosition(1,0));}homeContent.ResumeLayout();}
+ }finally{adapting=false;}}
+ internal int CheckResponsive(){foreach(var size in new[]{new Size(820,650),new Size(1024,768),new Size(1360,860)}){Size=size;Application.DoEvents();foreach(TabPage page in tabs.TabPages){tabs.SelectedTab=page;Application.DoEvents();if(navigation.Right>side.ClientSize.Width||navigation.Bottom>side.ClientSize.Height)return 151;}if(removeApp.Right>removeApp.Parent.ClientSize.Width)return 152;}return 0;}
+}
+}

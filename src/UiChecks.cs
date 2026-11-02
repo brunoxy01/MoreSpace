@@ -5,7 +5,7 @@ using System.Windows.Forms;
 namespace MoreSpace {
 static class UiChecks {
  internal static bool ContainsText(Control root,string text){return root.Text==text||root.Controls.Cast<Control>().Any(c=>ContainsText(c,text));}
- public static int Run(){try{using(var files=new ChartFileDialog(System.IO.Path.GetTempPath(),new System.Collections.Generic.List<Entry>())){files.Show();Application.DoEvents();files.Close();}using(var form=new MainWindow(true)){form.Show();Application.DoEvents();int result=form.CheckSelectionUi();if(result==0)result=form.CheckChartMenu();form.Close();if(!form.ChartMenuDisposed)return 115;return result;}}catch{return 90;}}
+ public static int Run(){try{using(var files=new ChartFileDialog(System.IO.Path.GetTempPath(),new System.Collections.Generic.List<Entry>())){files.Show();Application.DoEvents();files.Close();}using(var form=new MainWindow(true)){form.Show();Application.DoEvents();int result=form.CheckSelectionUi();if(result==0)result=form.CheckChartMenu();if(result==0)result=form.CheckResponsive();form.Close();if(!form.ChartMenuDisposed)return 115;return result;}}catch{return 90;}}
 }
 partial class MainWindow {
  public int CheckSelectionUi(){

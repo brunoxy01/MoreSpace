@@ -1,0 +1,23 @@
+name: Relatar um problema
+description: Erro, falha de interface ou resultado inesperado
+title: "[Bug] "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versão do +Espaço e do Windows
+      placeholder: +Espaço 3.0 / Windows 11
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      description: O que você fez e o que esperava que acontecesse?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Erro e capturas
+      description: Remova nomes, caminhos pessoais e qualquer dado sensível antes de enviar.

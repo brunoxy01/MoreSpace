@@ -1,104 +1,58 @@
-+Espaço — versão 2.4
++Espaço 3.0 — GUIA RÁPIDO
 
-Abra MoreSpace.exe (+Espaço). Windows 10/11 x64 e .NET Framework 4.8.
-É portátil: não precisa instalar. Não possui assinatura digital comercial.
+Abra MoreSpace.exe. Requer Windows 10/11 x64, .NET Framework 4.8 e Windows
+PowerShell 5.1. Não requer instalação; não possui assinatura comercial.
 
-HOME E PARTIÇÕES
-Após a primeira análise, pastas e subpastas usam um índice em memória, sem
-reler os arquivos. O horário da leitura fica visível. Atualizar refaz a análise.
-Mudanças externas exigem Atualizar. Fechar o app descarta o índice.
-Escolha uma partição para ver o gráfico de pizza de espaço usado e livre.
-Clique na fatia usada ou em Explorar pastas para analisar a ocupação por pasta.
-Depois clique em uma fatia de pasta ou dê duplo clique na lista para entrar.
-Subir nível retorna à pasta anterior; Partição volta ao gráfico usado/livre.
-Escolher pasta permite começar diretamente em qualquer diretório acessível.
-A análise pode ser cancelada; o resultado anterior será preservado.
-Partições não montadas não aparecem. Tamanhos lógicos de pastas podem diferir
-do uso físico do disco; links e itens sem acesso são ignorados e contados.
-As maiores sete entradas ganham fatias; as demais ficam agrupadas em Outros,
-mas todas permanecem acessíveis na lista para navegar.
+HOME: gráfico por partição; clique no usado para analisar pastas. A navegação
+reutiliza o índice. Atualizar refaz a análise. Botão direito permite revisar
+arquivos da pasta. Não é um monitor em tempo real.
 
-LIMPEZA E ARQUIVOS GRANDES
-A limpeza oferece temporários sem alteração/acesso registrado há 7 dias.
-Revise e marque os arquivos. A exclusão é permanente e pede confirmação.
-Datas de acesso podem ser imprecisas; antiguidade não garante inutilidade.
-Arquivos grandes (100 MB ou mais) são apenas listados para revisão no Explorer.
-O espaço disponível aparece no topo. Tamanho lógico não garante o mesmo
-volume recuperado no disco. A análise não identifica tudo que é inútil.
+ARQUIVOS GRANDES: busca automática a partir de 100 MB nos discos fixos locais.
+Resultados progressivos, cancelamento e revisão dos marcados.
 
-PROCESSOS
-CPU, RAM residente, PID, sessão e caminho do executável. Busca e ordenação
-por RAM, CPU ou nome. Atualiza a cada 3 segundos enquanto a tela está aberta.
-CPU exige duas amostras e considera todos os núcleos; “—” indica indisponível.
-Alguns caminhos/dados exigem privilégios e aparecem como acesso restrito.
-Somente processos acessíveis da sua sessão podem receber fechamento.
-Processos críticos e uma lista de componentes do Windows são protegidos.
-Prefira solicitar fechamento. Forçar pode perder dados não salvos.
-Não há esvaziamento artificial de cache nem promessa de ganho de desempenho.
+REMOÇÃO: Home, arquivos grandes, duplicados e caches usam a Lixeira por padrão.
+A opção Excluir permanentemente é explícita. O Windows pode pedir confirmação
+extra se o arquivo não couber na Lixeira ou se a unidade não tiver Lixeira.
+Caminhos com 260 caracteres ou mais são recusados pela API de reciclagem;
+a análise suporta caminhos longos. A tela Limpeza mantém exclusão permanente
+com confirmação para temporários antigos.
 
-INICIALIZAÇÃO
-Marque para habilitar; desmarque para desabilitar; clique em Aplicar alterações.
-As alterações são revisadas antes de gravar e valem para próximos logins.
-É possível reverter usando as mesmas caixas. Não desinstala nem encerra apps.
-Lê Run, Run32 e pastas Startup da sua conta e de todos os usuários.
-Altera somente os estados correspondentes em Explorer\StartupApproved.
-Esse formato interno do Windows pode variar entre versões: estados
-desconhecidos ficam somente para consulta e devem ser gerenciados no Windows.
-Entradas de máquina podem exigir administrador. Falhas ficam em Atividade;
-o programa não eleva permissões automaticamente.
-Serviços, tarefas agendadas, políticas e startup tasks de apps Store não são
-inventariados aqui. O botão Configurações do Windows oferece controles extras.
-Aplicativos e políticas podem recriar ou alterar configurações posteriormente.
-Antes de gravar, salva o estado anterior em:
-%LOCALAPPDATA%\MaisEspaco\Backups
-Os backups JSON são registros para recuperação técnica, não instaladores.
+DUPLICADOS: escolha uma pasta; compara conteúdo inteiro por SHA-256 e tamanho.
+Uma cópia é protegida e verificada antes de cada remoção. Links, arquivos só
+na nuvem e certas dependências são ignorados. Nenhuma cópia vem marcada.
 
-APLICATIVOS
-Lista pacotes Microsoft Store/Appx da sua conta, incluindo muitos apps que
-vêm com o Windows. O filtro Apps Microsoft facilita encontrá-los, mas não
-comprova que foram instalados de fábrica. Nomes amigáveis vêm do menu Iniciar;
-pacotes sem nome disponível usam o identificador. Passe o mouse para detalhes.
-A remoção usa Remove-AppxPackage para o pacote exato e sua conta somente.
-Pede confirmação e revalida a proteção antes de remover. Frameworks,
-pacotes não removíveis e componentes essenciais conhecidos são protegidos.
-O Windows pode recusar outras remoções por dependências ou políticas.
-Dados locais do app podem ser perdidos. Reinstalação depende da Store ou
-do instalador. Não remove provisionamento para futuras contas do computador.
-Programas tradicionais e utilitários do fabricante: botão Programas
-tradicionais abre a desinstalação oficial nas Configurações do Windows.
-Permite selecionar vários apps. O lote é revisado antes de confirmar; a remoção ocorre um por vez, com opção de parar após o atual.
+CACHES: lista apenas categorias conhecidas. Feche o app correspondente antes.
+São oferecidos arquivos sem alteração/acesso registrado há pelo menos 7 dias.
+Dados de apps lista pastas de AppData para revisão manual; não afirma que uma
+pasta seja inútil nem órfã. A escolha final é sua.
 
-ATIVIDADE E PRIVACIDADE
-Clique no indicador ESPAÇO LIBERADO no topo para abrir o histórico persistente.
-O total soma temporários excluídos (tamanho lógico), somente a partir da 2.2.
-O histórico também registra remoções de apps e a variação do espaço livre nos
-discos fixos, medida antes/depois. Outros programas podem influenciar esse
-valor; ele pode ser negativo e não é contabilizado como ganho exato do app.
-Os registros ficam em %LOCALAPPDATA%\MaisEspaco\Historico.
-Registros locais em %LOCALAPPDATA%\MaisEspaco\Relatorios.
-Contêm caminhos e nomes de programas; revise antes de compartilhar.
-Não há telemetria ou atualização automática no +Espaço.
+LIXEIRA: Atualizar consulta tamanho/itens por unidade. Abrir Lixeira permite
+restaurar pelo Explorer. Esvaziar é permanente e pede confirmação.
 
-VALIDAÇÃO
-build.ps1 compila e executa os testes. --self-test verifica o scanner.
---management-test testa o estado de inicialização em chaves fictícias isoladas
-em Software\MaisEspaco\Tests e consulta aplicativos sem removê-los.
-Nenhum app real foi desinstalado e nenhuma inicialização real foi alterada
-na validação desta versão. A compatibilidade não foi testada em todos os PCs.
+ATUALIZAÇÕES: requer winget/App Installer instalado. Consulte a lista, copie
+um ID e acione a atualização interativa. A Store tem botão próprio.
 
-REFERÊNCIAS MICROSOFT
-https://support.microsoft.com/en-us/windows/experience/startup-boot/configure-startup-applications-in-windows
-https://learn.microsoft.com/en-us/powershell/module/appx/remove-appxpackage
-https://learn.microsoft.com/en-us/windows/win32/setupapi/run-and-runonce-registry-keys
+REVISÃO: abre ferramentas oficiais para DNS, disco, otimização, indexação e
+DISM. O Windows solicita administrador quando necessário. A conclusão aparece
+na ferramenta externa. Não há limpeza de Registro nem otimização artificial
+ativa de RAM.
 
-EXCLUIR PELA PIZZA
-Após analisar uma pasta, botão direito na fatia ou linha > Ver arquivos / excluir.
-Marque arquivos e revise a confirmação. Exclusão permanente, sem Lixeira.
-Somente arquivos diretos; nenhuma subpasta é removida. Locais protegidos,
-links e arquivos alterados desde a leitura são preservados. A Home registra
-os arquivos excluídos no total lógico e histórico desde a versão 2.4.
-ARQUIVOS GRANDES (2.4)
-Busca automática ao abrir, em discos locais fixos, para arquivos a partir de 100 MB.
-Resultados progressivos; ordenação final do maior para o menor. Marque arquivos
-e use Excluir marcados para revisar e confirmar a exclusão permanente.
-A versão 2.4 também corrige caminhos longos e arredonda/anima o cartão do histórico.
+DISCOS EXTERNOS: unidades removíveis; revisão de Thumbs.db e .DS_Store e pedido
+de ejeção. Aguarde a notificação do Windows antes de desconectar.
+
+BANDEJA E AGENDA: acesso rápido enquanto o app está aberto. A análise periódica
+pode ser ligada em Revisão; vem desligada, vale apenas para a sessão e nunca
+remove arquivos automaticamente. Fechar o aplicativo encerra o agendamento.
+
+HISTÓRICO: clique no cartão de espaço liberado. Enviar à Lixeira não é contado
+como espaço liberado. Tamanhos lógicos de exclusões permanentes são separados
+da variação livre do disco, que outros programas também podem influenciar.
+Dados ficam em %LOCALAPPDATA%\MaisEspaco. Revise logs antes de compartilhar.
+
+LIMITES: não detecta todo arquivo inútil; não garante volume recuperado nem
+aumento de desempenho. Pastas sincronizadas podem propagar remoções à nuvem.
+O layout foi testado em 820x650, 1024x768 e 1360x860, não em todos os DPIs.
+
+GUIA COMPLETO E CÓDIGO
+https://github.com/brunoxy01/MoreSpace
+https://github.com/brunoxy01/MoreSpace/blob/main/docs/FEATURES.md
