@@ -1,5 +1,13 @@
 # Histórico
 
+## 2.2.0
+
+- Enumeração única de diretórios com metadados em cache, evitando consultas redundantes por arquivo.
+- Índice de tamanhos de todas as subpastas: navegação sem releitura após a primeira análise.
+- Horário do índice visível, atualização explícita e invalidação após operações de limpeza/remoção.
+- Indicador de espaço liberado e histórico persistente com tamanho lógico separado da variação observada no espaço livre.
+- Testes de desempenho, cache, cancelamento e persistência do histórico.
+
 ## 2.1.0
 
 - Home com gráfico de pizza das partições e exploração de pastas/subpastas por clique, com retorno ao nível superior e cancelamento.

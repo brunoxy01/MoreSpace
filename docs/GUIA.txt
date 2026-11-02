@@ -1,9 +1,12 @@
-+Espaço — versão 2.1
++Espaço — versão 2.2
 
 Abra MoreSpace.exe (+Espaço). Windows 10/11 x64 e .NET Framework 4.8.
 É portátil: não precisa instalar. Não possui assinatura digital comercial.
 
 HOME E PARTIÇÕES
+Após a primeira análise, pastas e subpastas usam um índice em memória, sem
+reler os arquivos. O horário da leitura fica visível. Atualizar refaz a análise.
+Mudanças externas exigem Atualizar. Fechar o app descarta o índice.
 Escolha uma partição para ver o gráfico de pizza de espaço usado e livre.
 Clique na fatia usada ou em Explorar pastas para analisar a ocupação por pasta.
 Depois clique em uma fatia de pasta ou dê duplo clique na lista para entrar.
@@ -66,6 +69,12 @@ tradicionais abre a desinstalação oficial nas Configurações do Windows.
 Permite selecionar vários apps. O lote é revisado antes de confirmar; a remoção ocorre um por vez, com opção de parar após o atual.
 
 ATIVIDADE E PRIVACIDADE
+Clique no indicador ESPAÇO LIBERADO no topo para abrir o histórico persistente.
+O total soma temporários excluídos (tamanho lógico), somente a partir da 2.2.
+O histórico também registra remoções de apps e a variação do espaço livre nos
+discos fixos, medida antes/depois. Outros programas podem influenciar esse
+valor; ele pode ser negativo e não é contabilizado como ganho exato do app.
+Os registros ficam em %LOCALAPPDATA%\MaisEspaco\Historico.
 Registros locais em %LOCALAPPDATA%\MaisEspaco\Relatorios.
 Contêm caminhos e nomes de programas; revise antes de compartilhar.
 Não há telemetria ou atualização automática no +Espaço.

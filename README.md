@@ -11,6 +11,8 @@ Aplicativo portátil para Windows, em português, para revisar espaço em disco,
 ## O que faz
 
 - Home com gráfico de pizza de espaço usado/livre para cada partição montada e acessível.
+- Índice em memória: a primeira análise lê a árvore uma vez; entrar e voltar em subpastas reaproveita o resultado. O horário da leitura fica visível e **Atualizar** força uma nova análise.
+- Indicador de espaço liberado no topo, com histórico persistente de limpezas e remoções de aplicativos. Clique no indicador para ver os detalhes.
 - Exploração por pasta: clique na fatia usada para analisar o disco; depois clique em uma pasta no gráfico ou dê duplo clique na lista para descer um nível. Use **Subir nível** para voltar e **Cancelar** para interromper a leitura.
 - Analisa temporários antigos e permite excluir somente os arquivos selecionados.
 - Localiza arquivos grandes para revisão no Explorer.
@@ -40,6 +42,10 @@ O filtro Microsoft não comprova instalação de fábrica. O programa não conse
 
 A primeira leitura de um disco inteiro pode demorar. A distribuição por pastas soma tamanhos lógicos dos arquivos acessíveis e ignora links, portanto pode diferir do espaço físico usado. Entradas inacessíveis são contadas, e pastas com falhas são identificadas como parciais. O gráfico de partição usa os totais informados pelo Windows; partições não montadas não são exibidas.
 
+O índice é uma fotografia da análise, mantida nesta sessão, e não um monitor em tempo real. Limpezas/remoções feitas pelo app invalidam o índice. Mudanças externas exigem **Atualizar**; fechar o app descarta o índice.
+
+O total de espaço liberado soma tamanhos lógicos de temporários efetivamente excluídos, **a partir da versão 2.2**, sem estimar operações antigas. O histórico mostra separadamente a variação do espaço livre antes/depois nos discos fixos; essa variação inclui atividade de outros programas e pode ser negativa. Remoções de aplicativos registram a variação observada, não um tamanho de pacote presumido. O histórico fica em `%LOCALAPPDATA%\MaisEspaco\Historico` e é carregado uma vez ao abrir o app, sem analisar o disco para exibir o total.
+
 ![Seleção de aplicativos com dados demonstrativos](docs/interface.png)
 
 ## Compilar e testar
@@ -55,6 +61,7 @@ O script usa o compilador do .NET Framework instalado no Windows, gera `dist/Mor
 - `--self-test`: scanner, cancelamento e validação de temporários em pasta de teste.
 - `--management-test`: estados de inicialização em chaves fictícias isoladas e inventário somente leitura de pacotes.
 - `--space-test`: soma de tamanhos, navegação em subpastas e cancelamento em uma árvore de arquivos fictícia.
+- `--performance-test`: índice, cancelamento, atualização, histórico persistente e benchmark sintético com 3.000 arquivos; gera `dist/benchmark.txt`. Tempos locais são sensíveis ao cache do Windows, não uma promessa para discos inteiros.
 - `--ui-test`: seleção individual/global, bloqueio de protegidos, persistência ao filtrar e limpeza da seleção com dados fictícios.
 
 Esses testes **não desinstalam aplicativos reais nem alteram entradas reais de inicialização**. A desinstalação real e a aparência em todas as escalas de DPI ainda dependem de validação em cada ambiente.

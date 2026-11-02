@@ -52,12 +52,13 @@ partial class MainWindow {
   if(busy)return;var selected=chosenApps.Resolve(appEntries);if(selected.Count==0)return;
   using(var confirm=new AppRemovalDialog(selected)){if(confirm.ShowDialog(this)!=DialogResult.OK)return;}
   Busy(true);cancel.Enabled=false;removingApps=true;stopRequested=false;loadApps.Enabled=removeApp.Enabled=selectVisible.Enabled=clearApps.Enabled=apps.Enabled=appSearch.Enabled=appFilter.Enabled=false;stopApps.Visible=stopApps.Enabled=true;
-  int removed=0,failed=0,attempted=0;
+  var before=SavingsStore.Snapshot();int removed=0,failed=0,attempted=0;
   try{
    foreach(var app in selected){if(stopRequested)break;attempted++;status.Text="Removendo "+attempted+" de "+selected.Count+": "+(app.Title??app.Name)+"…";
     try{await Task.Run(()=>AppManager.Remove(app));Log("APP REMOVIDO E VERIFICADO "+app.FullName);appEntries.Remove(app);chosenApps.Set(app,false);removed++;}
     catch(Exception ex){failed++;Log("FALHA REMOÇÃO "+app.FullName+": "+ex.Message);}
    }
+   if(attempted>0)RecordSavings("Aplicativos",removed,null,before);
    RenderApps();RefreshOverview();string result=removed+" removidos • "+failed+" falhas • "+(selected.Count-attempted)+" não iniciados.";Log(result);status.Text=result;
    MessageBox.Show(this,result+"\r\n\r\nFalhas e itens não iniciados permanecem selecionados. Consulte Atividade para detalhes.","Resultado da desinstalação",MessageBoxButtons.OK,failed>0?MessageBoxIcon.Warning:MessageBoxIcon.Information);
   }finally{removingApps=false;Busy(false);loadApps.Enabled=apps.Enabled=appSearch.Enabled=appFilter.Enabled=true;stopApps.Visible=false;UpdateAppSelection();}

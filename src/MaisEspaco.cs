@@ -13,6 +13,7 @@ using System.Windows.Forms;
 namespace MoreSpace {
 static class Program {
  [STAThread] static void Main(string[] args) {
+  if(args.Contains("--performance-test")) { Environment.Exit(PerformanceChecks.Run()); return; }
   if(args.Contains("--space-test")) { Environment.Exit(SpaceChecks.Run()); return; }
   if(args.Contains("--self-test")) { Environment.Exit(Checks.Run()); return; }
   if(args.Contains("--management-test")) { Environment.Exit(ManagementChecks.Run()); return; }
@@ -37,15 +38,15 @@ static class Engine {
  public static List<Entry> Scan(string[] roots,bool temp,CancellationToken token,Action<int,string> progress,List<string> errors) {
   var result=new List<Entry>(); var seen=new HashSet<string>(StringComparer.OrdinalIgnoreCase); int count=0;
   foreach(string root in roots) {
-   var pending=new Stack<string>(); pending.Push(root);
+   if(!NoLinks(root))continue;var pending=new Stack<string>(); pending.Push(root);
    while(pending.Count>0) {
     token.ThrowIfCancellationRequested(); string dir=pending.Pop();
     try {
-     if(!NoLinks(dir) || !seen.Add(System.IO.Path.GetFullPath(dir))) continue;
-     foreach(string sub in Directory.EnumerateDirectories(dir)) pending.Push(sub);
-     foreach(string path in Directory.EnumerateFiles(dir)) {
+     if((File.GetAttributes(dir)&FileAttributes.ReparsePoint)!=0 || !seen.Add(System.IO.Path.GetFullPath(dir))) continue;
+     foreach(var info in new DirectoryInfo(dir).EnumerateFileSystemInfos()) {
+      string path=info.FullName;
       token.ThrowIfCancellationRequested();
-      try { var f=new FileInfo(path); if((f.Attributes&FileAttributes.ReparsePoint)!=0) continue;
+      try { if((info.Attributes&FileAttributes.ReparsePoint)!=0)continue;if((info.Attributes&FileAttributes.Directory)!=0){pending.Push(path);continue;}var f=(FileInfo)info;
        count++; if(count%250==0) progress(count,dir);
        if(temp ? f.LastWriteTimeUtc<DateTime.UtcNow.AddDays(-7) && f.LastAccessTimeUtc<DateTime.UtcNow.AddDays(-7) : f.Length>=100L*1024*1024)
         result.Add(new Entry{Path=path,Size=f.Length,Modified=f.LastWriteTimeUtc,Category=temp?"Temporário antigo — revisar":"Arquivo grande — revisar"});
@@ -74,7 +75,7 @@ partial class MainWindow:Form {
   layout.RowStyles.Add(new RowStyle(SizeType.Absolute,70));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,72));layout.RowStyles.Add(new RowStyle(SizeType.Percent,100));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,42)); BuildShell(layout);
   var header=new Panel{Dock=DockStyle.Fill,BackColor=Color.White}; header.Controls.Add(new Label{Text="Seu PC, mais leve.",ForeColor=navy,Font=new Font("Segoe UI",23,FontStyle.Bold),AutoSize=true,Location=new Point(0,0)});
   header.Controls.Add(new Label{Text="Espaço, desempenho e controle em um só lugar.",ForeColor=Color.DimGray,AutoSize=true,Location=new Point(3,44)});layout.Controls.Add(header,0,0);
-  overview.Dock=DockStyle.Fill;overview.Padding=new Padding(5,14,0,0);layout.Controls.Add(overview,0,1);
+  overview.Dock=DockStyle.Fill;overview.Padding=new Padding(5,14,0,0);SetupSavings(layout);
   tabs.Dock=DockStyle.Fill;layout.Controls.Add(tabs,0,2);status.Dock=DockStyle.Fill;status.TextAlign=ContentAlignment.MiddleLeft;status.AutoEllipsis=true;layout.Controls.Add(status,0,3);
   SetupHome();
   var tp=Page("Limpeza","Arquivos sem alteração ou acesso há mais de 7 dias. Revise a seleção; alguns apps podem guardar dados temporários úteis.");
@@ -112,8 +113,9 @@ partial class MainWindow:Form {
  async Task Clean() {
   if(busy)return;var entries=temps.CheckedItems.Cast<ListViewItem>().Select(i=>(Entry)i.Tag).ToArray();if(entries.Length==0){MessageBox.Show(this,"Selecione os temporários que deseja excluir.");return;}
   if(MessageBox.Show(this,"Excluir permanentemente "+entries.Length+" temporários selecionados ("+Engine.Bytes(entries.Sum(x=>x.Size))+")?\r\n\r\nNão serão enviados à Lixeira. Feche os aplicativos que possam usar esses arquivos. A lista mostra os caminhos completos.","Confirmar limpeza",MessageBoxButtons.YesNo,MessageBoxIcon.Warning,MessageBoxDefaultButton.Button2)!=DialogResult.Yes)return;
-  Busy(true);cancel.Enabled=false;status.Text="Limpando arquivos selecionados…";var removed=new HashSet<string>();var messages=new List<string>();long bytes=0;
+  Busy(true);cancel.Enabled=false;status.Text="Limpando arquivos selecionados…";var before=SavingsStore.Snapshot();var removed=new HashSet<string>();var messages=new List<string>();long bytes=0;
   try {await Task.Run(()=>{foreach(var e in entries)try {if(!Engine.Allowed(e)){messages.Add("PRESERVADO (alterado, recente ou fora das regras) "+e.Path);continue;}File.Delete(e.Path);removed.Add(e.Path);bytes+=e.Size;messages.Add("EXCLUÍDO "+Engine.Bytes(e.Size)+" | "+e.Path);}catch(Exception ex){messages.Add("NÃO EXCLUÍDO "+e.Path+" | "+ex.Message);}});
+   if(removed.Count>0)RecordSavings("Temporários",removed.Count,bytes,before);
    foreach(ListViewItem i in temps.Items.Cast<ListViewItem>().ToArray())if(removed.Contains(((Entry)i.Tag).Path))temps.Items.Remove(i);
    foreach(var m in messages)Log(m);status.Text=removed.Count+" arquivos excluídos • "+Engine.Bytes(bytes)+" lógicos • "+(entries.Length-removed.Count)+" preservados/falhas.";Log(status.Text);RefreshOverview();UpdateSelection();MessageBox.Show(this,status.Text+"\r\n\r\nO espaço livre real aparece no painel superior. Compressão e outros programas podem afetar a variação.","Resultado da limpeza");
   }finally{Busy(false);}

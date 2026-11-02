@@ -12,22 +12,8 @@ namespace MoreSpace {
 class SpaceItem {public string Name,Path;public long Size,Files;public bool Directory;public int Skipped;}
 class SpaceResult {public string Path;public List<SpaceItem> Items=new List<SpaceItem>();public int Skipped;}
 static class SpaceScanner {
- public static SpaceResult Read(string path,CancellationToken token,Action<long> progress){
-  path=System.IO.Path.GetFullPath(path);if(!Engine.NoLinks(path))throw new IOException("Pastas com links não são percorridas.");
-  var result=new SpaceResult{Path=path};long visited=0;var files=new SpaceItem{Name="Arquivos nesta pasta",Path=path,Directory=false};
-  foreach(string file in Directory.EnumerateFiles(path)){token.ThrowIfCancellationRequested();AddFile(file,files,ref visited,progress);}if(files.Files>0||files.Skipped>0)result.Items.Add(files);
-  foreach(string dir in Directory.EnumerateDirectories(path)){
-   token.ThrowIfCancellationRequested();var item=new SpaceItem{Name=System.IO.Path.GetFileName(dir),Path=dir,Directory=true};var stack=new Stack<string>();stack.Push(dir);
-   while(stack.Count>0){token.ThrowIfCancellationRequested();string current=stack.Pop();try{
-    if((File.GetAttributes(current)&FileAttributes.ReparsePoint)!=0){item.Skipped++;continue;}
-    foreach(string file in Directory.EnumerateFiles(current)){token.ThrowIfCancellationRequested();AddFile(file,item,ref visited,progress);}
-    foreach(string child in Directory.EnumerateDirectories(current))stack.Push(child);
-   }catch(UnauthorizedAccessException){item.Skipped++;}catch(IOException){item.Skipped++;}}
-   result.Items.Add(item);
-  }
-  result.Skipped=result.Items.Sum(i=>i.Skipped);result.Items=result.Items.OrderByDescending(i=>i.Size).ToList();return result;
- }
- static void AddFile(string file,SpaceItem item,ref long visited,Action<long> progress){try{var info=new FileInfo(file);if((info.Attributes&FileAttributes.ReparsePoint)!=0){item.Skipped++;return;}item.Size+=info.Length;item.Files++;visited++;if(visited%1000==0)progress(visited);}catch(UnauthorizedAccessException){item.Skipped++;}catch(IOException){item.Skipped++;}}
+ public static SpaceResult Read(string path,CancellationToken token,Action<long> progress){return ScanIndex.Build(path,token,progress).Get(path);}
+
 }
 class PieSector {public string Name;public long Value;public Color Color;public SpaceItem Item;}
 class SpacePie:Control {
@@ -47,6 +33,7 @@ class SpacePie:Control {
 }
 partial class MainWindow {
  ComboBox volumes=new ComboBox();Label homeTitle=new Label(),homeNote=new Label();TextBox location=new TextBox();SpacePie pie=new SpacePie();ListView distribution=new SmoothListView();
+ ScanIndex spaceIndex;
  Button exploreHome,upHome,resetHome,cancelHome,refreshHome,chooseHome;string currentFolder;bool loadingVolumes;SpaceResult currentSpace;
  readonly Color[] chartColors={Color.FromArgb(33,105,86),Color.FromArgb(62,159,130),Color.FromArgb(49,113,171),Color.FromArgb(120,108,172),Color.FromArgb(198,134,60),Color.FromArgb(176,86,110),Color.FromArgb(72,142,156),Color.FromArgb(126,144,73)};
  class Volume {public string Root,Label,Format;public long Total,Free;public override string ToString(){return Root+"  "+Label+" • "+Engine.Bytes(Total);}}
@@ -54,7 +41,7 @@ partial class MainWindow {
   var page=new TabPage("Home"){BackColor=Color.White};tabs.TabPages.Add(page);var grid=new TableLayoutPanel{Dock=DockStyle.Fill,RowCount=5,ColumnCount=1,Padding=new Padding(0,12,0,0)};grid.RowStyles.Add(new RowStyle(SizeType.Absolute,40));grid.RowStyles.Add(new RowStyle(SizeType.Absolute,52));grid.RowStyles.Add(new RowStyle(SizeType.Absolute,36));grid.RowStyles.Add(new RowStyle(SizeType.Percent,100));grid.RowStyles.Add(new RowStyle(SizeType.Absolute,56));page.Controls.Add(grid);
   homeTitle.Text="Partições e ocupação";homeTitle.Font=new Font("Segoe UI",16,FontStyle.Bold);homeTitle.Dock=DockStyle.Fill;grid.Controls.Add(homeTitle,0,0);
   var bar=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false,AutoScroll=true};volumes.DropDownStyle=ComboBoxStyle.DropDownList;volumes.Width=230;volumes.Margin=new Padding(0,9,8,0);volumes.AccessibleName="Partição";bar.Controls.Add(volumes);
-  refreshHome=Btn("Atualizar",delegate{LoadVolumes();});bar.Controls.Add(refreshHome);exploreHome=Btn("Explorar pastas",async delegate{var volume=volumes.SelectedItem as Volume;if(volume!=null)await Explore(volume.Root);});bar.Controls.Add(exploreHome);
+  refreshHome=Btn("Atualizar",async delegate{if(currentFolder!=null)await Explore(currentFolder,true);else LoadVolumes();});bar.Controls.Add(refreshHome);exploreHome=Btn("Explorar pastas",async delegate{var volume=volumes.SelectedItem as Volume;if(volume!=null)await Explore(volume.Root);});bar.Controls.Add(exploreHome);
   chooseHome=Btn("Escolher pasta",async delegate{if(busy)return;using(var dialog=new FolderBrowserDialog{Description="Escolha uma pasta para detalhar sua ocupação",ShowNewFolderButton=false}){if(dialog.ShowDialog(this)==DialogResult.OK)await Explore(dialog.SelectedPath);}});bar.Controls.Add(chooseHome);
   upHome=Btn("Subir nível",async delegate{if(currentFolder!=null){var parent=new DirectoryInfo(currentFolder).Parent;if(parent!=null)await Explore(parent.FullName);else ShowVolume();}});upHome.Enabled=false;bar.Controls.Add(upHome);
   resetHome=Btn("Partição",delegate{ShowVolume();});bar.Controls.Add(resetHome);cancelHome=Btn("Cancelar",delegate{if(cts!=null)cts.Cancel();});cancelHome.Enabled=false;bar.Controls.Add(cancelHome);grid.Controls.Add(bar,0,1);
@@ -70,13 +57,13 @@ partial class MainWindow {
   homeTitle.Text="Partição "+v.Root+" • "+(String.IsNullOrWhiteSpace(v.Label)?"Sem rótulo":v.Label);location.Text=v.Root+"  |  "+v.Format+"  |  Capacidade: "+Engine.Bytes(v.Total);long used=Math.Max(0,v.Total-v.Free);
   pie.Sectors.Add(new PieSector{Name="Usado",Value=used,Color=chartColors[0],Item=new SpaceItem{Name="Usado",Path=v.Root,Directory=true}});pie.Sectors.Add(new PieSector{Name="Livre",Value=v.Free,Color=chartColors[1]});foreach(var sector in pie.Sectors){var row=new ListViewItem(new[]{sector.Name,Engine.Bytes(sector.Value),v.Total>0?(sector.Value/(double)v.Total*100).ToString("N1")+"%":"—","Volume"});row.Tag=sector.Item;row.ForeColor=sector.Color;distribution.Items.Add(row);}homeNote.Text="Selecione uma partição acima. Clique na fatia usada ou em Explorar pastas para detalhar a ocupação; a leitura de um disco inteiro pode demorar.\r\nPartições sem letra/ponto de montagem acessível não aparecem nesta lista.";pie.Invalidate();
  }
- async Task Explore(string path){if(busy||demoMode)return;Busy(true);cancel.Enabled=false;cts=new CancellationTokenSource();SetHomeBusy(true);status.Text="Calculando tamanhos em "+path+"…";
-  try{var result=await Task.Run(()=>SpaceScanner.Read(path,cts.Token,count=>BeginInvoke((Action)(()=>status.Text=count.ToString("N0")+" arquivos lidos • "+path))));currentFolder=result.Path;currentSpace=result;RenderSpace();status.Text="Pasta analisada • "+result.Skipped+" itens/pastas ignorados.";Log("OCUPAÇÃO "+path+" | "+result.Skipped+" ignorados");}
+ async Task Explore(string path,bool force=false){if(busy||demoMode)return; if(!force&&spaceIndex!=null&&spaceIndex.Contains(path)){currentFolder=path;currentSpace=spaceIndex.Get(path);RenderSpace();status.Text="Leitura instantânea do índice • capturado às "+spaceIndex.CapturedUtc.ToLocalTime().ToString("HH:mm:ss")+" • Atualizar refaz a análise.";return;}Busy(true);cancel.Enabled=false;cts=new CancellationTokenSource();SetHomeBusy(true);status.Text="Calculando tamanhos em "+path+"…";
+  try{var index=await Task.Run(()=>ScanIndex.Build(path,cts.Token,count=>BeginInvoke((Action)(()=>status.Text=count.ToString("N0")+" arquivos lidos • "+path))));spaceIndex=index;var result=index.Get(path);currentFolder=result.Path;currentSpace=result;RenderSpace();status.Text="Análise em "+index.Seconds.ToString("N1")+" s • "+index.FilesRead.ToString("N0")+" arquivos • navegação por subpastas sem releitura.";Log("OCUPAÇÃO "+path+" | "+result.Skipped+" ignorados");}
   catch(OperationCanceledException){status.Text="Leitura cancelada. A visualização anterior foi preservada.";}catch(Exception ex){Log("FALHA OCUPAÇÃO "+path+": "+ex.Message);MessageBox.Show(this,ex.Message,"Não foi possível analisar a pasta");}
   finally{cts.Dispose();cts=null;Busy(false);SetHomeBusy(false);}
  }
  void SetHomeBusy(bool value){volumes.Enabled=refreshHome.Enabled=exploreHome.Enabled=chooseHome.Enabled=resetHome.Enabled=!value;upHome.Enabled=!value&&currentFolder!=null;cancelHome.Enabled=value;}
- void RenderSpace(){var result=currentSpace;if(result==null)return;homeTitle.Text="Ocupação por pasta";location.Text=result.Path;upHome.Enabled=true;pie.Sectors.Clear();distribution.BeginUpdate();distribution.Items.Clear();double total=result.Items.Sum(i=>(double)i.Size);int index=0;
+ void RenderSpace(){var result=currentSpace;if(result==null)return;homeTitle.Text="Ocupação por pasta";location.Text=result.Path+(spaceIndex==null?"":"  • Índice de "+spaceIndex.CapturedUtc.ToLocalTime().ToString("HH:mm:ss")+" — Atualizar para reler");upHome.Enabled=true;pie.Sectors.Clear();distribution.BeginUpdate();distribution.Items.Clear();double total=result.Items.Sum(i=>(double)i.Size);int index=0;
   foreach(var item in result.Items){Color color=chartColors[Math.Min(index,7)];var row=new ListViewItem(new[]{item.Name,Engine.Bytes(item.Size),total>0?(item.Size/total*100).ToString("N1")+"%":"—",item.Skipped>0?"Parcial • "+item.Skipped:"Concluída"});row.Tag=item;row.ToolTipText=item.Path;row.ForeColor=color;distribution.Items.Add(row);if(index<7)pie.Sectors.Add(new PieSector{Name=item.Name,Value=item.Size,Color=color,Item=item});index++;}
   if(result.Items.Count>7)pie.Sectors.Add(new PieSector{Name="Outros — veja a lista",Value=result.Items.Skip(7).Sum(i=>i.Size),Color=chartColors[7]});distribution.EndUpdate();homeNote.Text="Clique em uma fatia de pasta ou dê duplo clique na lista para descer um nível. Use Subir nível para voltar.\r\nTamanhos lógicos; links e itens sem acesso são ignorados ("+result.Skipped+"). O total pode diferir do uso físico da partição.";pie.Invalidate();
  }
