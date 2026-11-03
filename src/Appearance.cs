@@ -38,7 +38,7 @@ partial class MainWindow {
   themeChoice.Items.AddRange(new object[]{"Sistema","Claro","Escuro"});int choice=0;
   if(!demoMode)try{int.TryParse(File.ReadAllText(ThemePath),out choice);}catch{}
   themeChoice.SelectedIndex=Math.Max(0,Math.Min(2,choice));
-  support=new LinkLabel{Text="suport us",AutoSize=true,Location=new Point(12,66)};support.LinkClicked+=delegate{OpenSettings("https://github.com/brunoxy01/MoreSpace");};
+  AddLanguagePicker();support=new LinkLabel{Text="suport us",AutoSize=true,Location=new Point(12,83)};support.LinkClicked+=delegate{OpenSettings("https://github.com/brunoxy01/MoreSpace");};
   preferences.Controls.AddRange(new Control[]{label,themeChoice,support});side.Controls.Add(preferences);preferences.BringToFront();
   themeChoice.SelectedIndexChanged+=delegate{ApplyAppearance();if(!demoMode)try{Directory.CreateDirectory(Path.GetDirectoryName(ThemePath));File.WriteAllText(ThemePath,themeChoice.SelectedIndex.ToString());}catch(Exception ex){status.Text="Não foi possível salvar a aparência: "+ex.Message;}};
   themeTimer.Tick+=delegate{bool dark=themeChoice.SelectedIndex==2||(themeChoice.SelectedIndex==0&&AppTheme.SystemDark());if(dark!=AppTheme.Dark)ApplyAppearance();};
@@ -46,7 +46,7 @@ partial class MainWindow {
   ApplyAppearance();themeTimer.Start();AdaptLayout();
  }
  void ThemeOpenForms(object sender,EventArgs e){foreach(Form form in Application.OpenForms)if(!form.IsDisposed&&themedForms.Add(form)){if(form==this)ApplyAppearance();else AppTheme.Apply(form);form.Disposed+=delegate{themedForms.Remove(form);};}}
- void ApplyAppearance(){AppTheme.Dark=themeChoice.SelectedIndex==2||(themeChoice.SelectedIndex==0&&AppTheme.SystemDark());foreach(Form form in Application.OpenForms)AppTheme.Apply(form);AppTheme.Apply(this);side.BackColor=AppTheme.Surface;brand.ForeColor=AppTheme.Accent;brand.BackColor=AppTheme.Surface;navigation.BackColor=AppTheme.Surface;UpdateNavigation();}
+ void ApplyAppearance(){AppTheme.Dark=themeChoice.SelectedIndex==2||(themeChoice.SelectedIndex==0&&AppTheme.SystemDark());foreach(Form form in Application.OpenForms)AppTheme.Apply(form);AppTheme.Apply(this);side.BackColor=AppTheme.Surface;brand.ForeColor=AppTheme.Accent;brand.BackColor=AppTheme.Surface;navigation.BackColor=AppTheme.Surface;UpdateNavigation();RenderCards();}
  internal void PreviewTheme(int choice){themeChoice.SelectedIndex=choice;ApplyAppearance();}
  internal int CheckAppearance(){foreach(int choice in new[]{2,1,0}){PreviewTheme(choice);Application.DoEvents();bool dark=choice==2||(choice==0&&AppTheme.SystemDark());if(AppTheme.Dark!=dark||report.BackColor!=AppTheme.Surface||pie.BackColor!=AppTheme.Background)return 161;if(support.Text!="suport us"||navigation.Bottom>preferences.Top)return 162;using(var dialog=new ChartFileDialog(Path.GetTempPath(),new List<Entry>())){dialog.Show(this);Application.DoEvents();ThemeOpenForms(this,EventArgs.Empty);if(dialog.BackColor!=AppTheme.Background)return 163;dialog.Close();}}return 0;}
 }

@@ -6,7 +6,7 @@ New-Item -ItemType Directory -Force $dist | Out-Null
 # Keep the file name ASCII so both Windows PowerShell 5 and PowerShell 7 can build.
 $target = Join-Path $dist 'MoreSpace.exe'
 $sources = @(Get-ChildItem (Join-Path $PSScriptRoot 'src') -Filter '*.cs' | ForEach-Object FullName)
-& $compiler /nologo /target:winexe /optimize+ /platform:x64 "/out:$target" "/win32icon:$PSScriptRoot\assets\app.ico" "/win32manifest:$PSScriptRoot\src\app.manifest" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.Web.Extensions.dll @sources
+$resources = @(Get-ChildItem (Join-Path $PSScriptRoot "assets/ui") -File | ForEach-Object { "/resource:"+$_.FullName+","+$_.Name }); & $compiler @resources /nologo /target:winexe /optimize+ /platform:x64 "/out:$target" "/win32icon:$PSScriptRoot\assets\app.ico" "/win32manifest:$PSScriptRoot\src\app.manifest" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.Web.Extensions.dll @sources
 if ($LASTEXITCODE -ne 0) { throw 'Compilation failed.' }
 if (-not $SkipTests) {
     foreach ($suite in @('--self-test', '--management-test', '--space-test', '--performance-test', '--chart-file-test', '--large-test', '--long-path-test', '--features-test', '--ui-test')) {

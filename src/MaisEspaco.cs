@@ -41,7 +41,7 @@ static class Engine {
   if(!Roots().Any(r=>Under(e.Path,r)) || !NoLinks(e.Path)) return false;
   var f=new FileInfo(e.Path); return f.Exists && f.Length==e.Size && f.LastWriteTimeUtc==e.Modified && f.LastWriteTimeUtc<DateTime.UtcNow.AddDays(-7) && f.LastAccessTimeUtc<DateTime.UtcNow.AddDays(-7);
  }
- public static List<Entry> Scan(string[] roots,bool temp,CancellationToken token,Action<int,string> progress,List<string> errors) {
+ public static List<Entry> Scan(string[] roots,bool temp,CancellationToken token,Action<int,string> progress,List<string> errors,bool showRecent=false) {
   var result=new List<Entry>(); var seen=new HashSet<string>(StringComparer.OrdinalIgnoreCase); int count=0;
   foreach(string root in roots) {
    if(!NoLinks(root))continue;var pending=new Stack<string>(); pending.Push(root);
@@ -54,8 +54,8 @@ static class Engine {
       token.ThrowIfCancellationRequested();
       try { if((info.Attributes&FileAttributes.ReparsePoint)!=0)continue;if((info.Attributes&FileAttributes.Directory)!=0){pending.Push(path);continue;}var f=(FileInfo)info;
        count++; if(count%250==0) progress(count,dir);
-       if(temp ? f.LastWriteTimeUtc<DateTime.UtcNow.AddDays(-7) && f.LastAccessTimeUtc<DateTime.UtcNow.AddDays(-7) : f.Length>=100L*1024*1024)
-        result.Add(new Entry{Path=path,Size=f.Length,Modified=f.LastWriteTimeUtc,Category=temp?"Temporário antigo — revisar":"Arquivo grande — revisar"});
+       bool recent=temp&&(f.LastWriteTimeUtc>=DateTime.UtcNow.AddDays(-7)||f.LastAccessTimeUtc>=DateTime.UtcNow.AddDays(-7));if(temp ? showRecent || f.LastWriteTimeUtc<DateTime.UtcNow.AddDays(-7) && f.LastAccessTimeUtc<DateTime.UtcNow.AddDays(-7) : f.Length>=100L*1024*1024)
+        result.Add(new Entry{Path=path,Size=f.Length,Modified=f.LastWriteTimeUtc,Category=recent?"Recente — protegido":temp?"Temporário antigo — revisar":"Arquivo grande — revisar"});
       } catch(Exception ex) { if(!(ex is IOException || ex is UnauthorizedAccessException)) throw; errors.Add(path+": "+ex.Message); }
      }
     } catch(Exception ex) { if(!(ex is IOException || ex is UnauthorizedAccessException)) throw; errors.Add(dir+": "+ex.Message); }
@@ -71,24 +71,24 @@ partial class MainWindow:Form {
  Label overview=new Label(),status=new Label(),selection=new Label(),ramInfo=new Label();
  ListView temps=FilesView(true),large=FilesView(false),processes=new SmoothListView();
  TextBox report=new TextBox(); TabControl tabs=new QuietTabs();
- Button scanTemp,scanLarge,clean,cancel; CancellationTokenSource cts; bool busy; string reportPath;
+ Button scanTemp,scanLarge,clean,cancel; CancellationTokenSource cts; bool busy,tempVisited; string reportPath;
  List<string> logs=new List<string>(); System.Windows.Forms.Timer timer=new System.Windows.Forms.Timer();
  public MainWindow(bool demo=false) {
   demoMode=demo;
   Text="+Espaço"; DoubleBuffered=true; Icon=Icon.ExtractAssociatedIcon(Application.ExecutablePath); Size=new Size(1360,860); MinimumSize=new Size(820,650); StartPosition=FormStartPosition.CenterScreen;
   Font=new Font("Segoe UI",10); ForeColor=navy; BackColor=Color.White;
   var layout=new TableLayoutPanel{Dock=DockStyle.Fill,RowCount=4,ColumnCount=1,Padding=new Padding(24,16,24,12)};
-  layout.RowStyles.Add(new RowStyle(SizeType.Absolute,70));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,72));layout.RowStyles.Add(new RowStyle(SizeType.Percent,100));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,42)); BuildShell(layout);
+  layout.RowStyles.Add(new RowStyle(SizeType.Absolute,70));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,90));layout.RowStyles.Add(new RowStyle(SizeType.Percent,100));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,42)); BuildShell(layout);
   var header=new Panel{Dock=DockStyle.Fill,BackColor=Color.White}; header.Controls.Add(new Label{Text="Seu PC, mais leve.",ForeColor=navy,Font=new Font("Segoe UI",23,FontStyle.Bold),AutoSize=true,Location=new Point(0,0)});
   header.Controls.Add(new Label{Text="Espaço, desempenho e controle em um só lugar.",ForeColor=Color.DimGray,AutoSize=true,Location=new Point(3,44)});layout.Controls.Add(header,0,0);
   overview.Dock=DockStyle.Fill;overview.Padding=new Padding(5,14,0,0);SetupSavings(layout);
   tabs.Dock=DockStyle.Fill;layout.Controls.Add(tabs,0,2);status.Dock=DockStyle.Fill;status.TextAlign=ContentAlignment.MiddleLeft;status.AutoEllipsis=true;layout.Controls.Add(status,0,3);
   SetupHome();
-  var tp=Page("Limpeza","Arquivos sem alteração ou acesso há mais de 7 dias. Revise a seleção; alguns apps podem guardar dados temporários úteis.");
+  var tp=Page("Limpeza","Temporários recentes aparecem em cinza para consulta. Só é possível selecionar arquivos sem uso há mais de 7 dias.");
   var bar=new FlowLayoutPanel{Dock=DockStyle.Fill}; scanTemp=Btn("Analisar temporários",async delegate{await Scan(true);}); bar.Controls.Add(scanTemp);
   bar.Controls.Add(Btn("Selecionar todos",delegate{foreach(ListViewItem i in temps.Items)i.Checked=true;}));bar.Controls.Add(Btn("Desmarcar",delegate{foreach(ListViewItem i in temps.Items)i.Checked=false;}));
   clean=Btn("Excluir selecionados",async delegate{await Clean();});bar.Controls.Add(clean);cancel=Btn("Cancelar análise",delegate{if(cts!=null)cts.Cancel();});cancel.Enabled=false;bar.Controls.Add(cancel);
-  tp.Controls.Add(bar,0,1);tp.Controls.Add(temps,0,2);selection.Dock=DockStyle.Fill;selection.Text="Nenhum arquivo selecionado.";tp.Controls.Add(selection,0,3); temps.ItemChecked+=delegate{BeginInvoke((Action)UpdateSelection);};temps.DoubleClick+=delegate{Reveal(temps);};
+  temps.Columns.Add("Situação",180);temps.ItemCheck+=delegate(object sender,ItemCheckEventArgs e){var file=temps.Items[e.Index].Tag as Entry;if(file!=null&&file.Category.StartsWith("Recente"))e.NewValue=CheckState.Unchecked;};tp.Controls.Add(bar,0,1);tp.Controls.Add(temps,0,2);selection.Dock=DockStyle.Fill;selection.Text="Nenhum arquivo selecionado.";tp.Controls.Add(selection,0,3); temps.ItemChecked+=delegate{BeginInvoke((Action)UpdateSelection);};temps.DoubleClick+=delegate{Reveal(temps);};
   SetupLargeFiles();
   var rp=Page("Processos","Consumo ao vivo a cada 3 segundos. CPU relativa ao total de núcleos; a primeira leitura precisa de uma segunda amostra.");
   var rb=new FlowLayoutPanel{Dock=DockStyle.Fill};rb.Controls.Add(Btn("Atualizar processos",delegate{RefreshProcesses();}));rb.Controls.Add(Btn("Solicitar fechamento",delegate{CloseProcess(false);}));rb.Controls.Add(Btn("Forçar encerramento…",delegate{CloseProcess(true);}));rp.Controls.Add(rb,0,1);
@@ -108,9 +108,9 @@ partial class MainWindow:Form {
   if(busy)return;string[] roots;
   if(temp) roots=Engine.Roots(); else {using(var dialog=new FolderBrowserDialog{Description="Escolha a pasta para procurar arquivos grandes",ShowNewFolderButton=false}) {if(dialog.ShowDialog(this)!=DialogResult.OK)return;roots=new[]{dialog.SelectedPath};}}
   Busy(true);cts=new CancellationTokenSource();var errors=new List<string>();status.Text="Analisando… Pastas com links são ignoradas.";
-  try {var entries=await Task.Run(()=>Engine.Scan(roots,temp,cts.Token,(count,path)=>BeginInvoke((Action)(()=>status.Text="Analisados "+count.ToString("N0")+" arquivos • "+path)),errors));
-   var view=temp?temps:large;view.BeginUpdate();view.Items.Clear();foreach(var e in entries) {var i=new ListViewItem(new[]{System.IO.Path.GetFileName(e.Path),Engine.Bytes(e.Size),e.Modified.ToLocalTime().ToString("g"),e.Path});i.Tag=e;view.Items.Add(i);}view.EndUpdate();
-   status.Text=entries.Count+" candidatos • "+Engine.Bytes(entries.Sum(x=>x.Size))+" • "+errors.Count+" itens/pastas sem acesso.";
+  try {var entries=await Task.Run(()=>Engine.Scan(roots,temp,cts.Token,(count,path)=>BeginInvoke((Action)(()=>status.Text="Analisados "+count.ToString("N0")+" arquivos • "+path)),errors,true));
+   var view=temp?temps:large;view.BeginUpdate();view.Items.Clear();foreach(var e in entries) {var i=new ListViewItem(new[]{System.IO.Path.GetFileName(e.Path),Engine.Bytes(e.Size),e.Modified.ToLocalTime().ToString("g"),e.Path});i.Tag=e;if(temp){i.SubItems.Add(e.Category);if(e.Category.StartsWith("Recente"))i.ForeColor=Color.Gray;}view.Items.Add(i);}view.EndUpdate();
+   status.Text=entries.Count+" encontrados ("+entries.Count(x=>x.Category.StartsWith("Recente"))+" recentes protegidos) • "+Engine.Bytes(entries.Sum(x=>x.Size))+" • "+errors.Count+" itens/pastas sem acesso.";
    Log("ANÁLISE "+String.Join("; ",roots)+"\r\n"+status.Text);foreach(string error in errors)Log("IGNORADO "+error);UpdateSelection();
   } catch(OperationCanceledException){status.Text="Análise cancelada. Resultados anteriores preservados.";Log(status.Text);}catch(Exception ex){MessageBox.Show(this,ex.Message,"Falha na análise");Log(ex.ToString());}
   finally{cts.Dispose();cts=null;Busy(false);}
