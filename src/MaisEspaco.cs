@@ -75,7 +75,7 @@ partial class MainWindow:Form {
  List<string> logs=new List<string>(); System.Windows.Forms.Timer timer=new System.Windows.Forms.Timer();
  public MainWindow(bool demo=false) {
   demoMode=demo;
-  Text="+Espaço 3.3.1"; DoubleBuffered=true; Icon=Icon.ExtractAssociatedIcon(Application.ExecutablePath); Size=new Size(1360,860); MinimumSize=new Size(820,650); StartPosition=FormStartPosition.CenterScreen;
+  Text="+Espaço 3.3.2"; DoubleBuffered=true; Icon=Icon.ExtractAssociatedIcon(Application.ExecutablePath); Size=new Size(1360,860); MinimumSize=new Size(820,650); StartPosition=FormStartPosition.CenterScreen;
   Font=new Font("Segoe UI",10); ForeColor=navy; BackColor=Color.White;
   var layout=new TableLayoutPanel{Dock=DockStyle.Fill,RowCount=4,ColumnCount=1,Padding=new Padding(24,16,24,12)};
   layout.RowStyles.Add(new RowStyle(SizeType.Absolute,70));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,90));layout.RowStyles.Add(new RowStyle(SizeType.Percent,100));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,42)); BuildShell(layout);
