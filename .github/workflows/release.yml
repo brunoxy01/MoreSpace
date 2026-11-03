@@ -1,0 +1,20 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: ./build.ps1
+        shell: pwsh
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/MoreSpace.exe
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+          make_latest: true
