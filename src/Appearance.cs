@@ -32,13 +32,13 @@ partial class MainWindow {
  readonly HashSet<Form> themedForms=new HashSet<Form>();
  static string ThemePath {get{return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"MaisEspaco","appearance.txt");}}
  void SetupAppearance(){
-  preferences=new Panel{Height=108,Dock=DockStyle.Bottom,Padding=new Padding(10)};
+  preferences=new Panel{Height=140,Dock=DockStyle.Bottom,Padding=new Padding(10)};
   var label=new Label{Text="Aparência",AutoSize=true,Location=new Point(12,4)};
   themeChoice=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Location=new Point(12,28),Width=126,Anchor=AnchorStyles.Left|AnchorStyles.Right|AnchorStyles.Top};
   themeChoice.Items.AddRange(new object[]{"Sistema","Claro","Escuro"});int choice=0;
   if(!demoMode)try{int.TryParse(File.ReadAllText(ThemePath),out choice);}catch{}
   themeChoice.SelectedIndex=Math.Max(0,Math.Min(2,choice));
-  AddLanguagePicker();support=new LinkLabel{Text="suport us",AutoSize=true,Location=new Point(12,83)};support.LinkClicked+=delegate{OpenSettings("https://github.com/brunoxy01/MoreSpace");};
+  AddLanguagePicker();support=new LinkLabel{Text="suport us",AutoSize=true,Location=new Point(12,114)};support.LinkClicked+=delegate{OpenSettings("https://github.com/brunoxy01/MoreSpace");};
   preferences.Controls.AddRange(new Control[]{label,themeChoice,support});side.Controls.Add(preferences);preferences.BringToFront();
   themeChoice.SelectedIndexChanged+=delegate{ApplyAppearance();if(!demoMode)try{Directory.CreateDirectory(Path.GetDirectoryName(ThemePath));File.WriteAllText(ThemePath,themeChoice.SelectedIndex.ToString());}catch(Exception ex){status.Text="Não foi possível salvar a aparência: "+ex.Message;}};
   themeTimer.Tick+=delegate{bool dark=themeChoice.SelectedIndex==2||(themeChoice.SelectedIndex==0&&AppTheme.SystemDark());if(dark!=AppTheme.Dark)ApplyAppearance();};

@@ -1,3 +1,9 @@
+# 3.2.0
+
+- Cartões de partições e RAM em React, bordas suaves e transições entre telas.
+- Arquivos grandes por unidade, leitura paralela entre discos e seleção de arquivos elegíveis.
+- Temporários recentes visíveis para consulta; menu e ações principais disponíveis em inglês.
+
 # 3.1.0
 
 - Temas Sistema, Claro e Escuro com preferência persistente e atualização automática conforme o Windows.
