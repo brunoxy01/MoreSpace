@@ -1,3 +1,9 @@
+# 3.3.0
+
+- Insights na Home, gráfico interativo e revisão para exclusão.
+- Seleção durante a análise, itens protegidos em cinza e revisão de arquivos somente leitura.
+- Análise de duplicados, ajustes nos cabeçalhos e mais textos em inglês.
+
 # 3.2.0
 
 - Cartões de partições e RAM em React, bordas suaves e transições entre telas.

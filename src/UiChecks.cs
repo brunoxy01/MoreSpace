@@ -9,7 +9,7 @@ static class UiChecks {
 }
 partial class MainWindow {
  public int CheckSelectionUi(){
-  int home=CheckHomeUi();if(home!=0)return home; PreviewPage(5);Application.DoEvents();
+  PreviewPage(2);large.Items.Clear();largeBlocked.Clear();var sample=new Entry{Path=@"C:\demo\candidate.zip"};AddLargeRows(new[]{new LargeHit{Entry=sample},new LargeHit{Entry=new Entry{Path=@"C:\demo\protected.sys"},Blocked="Protected"}});largeScanning=true;busy=true;var all=large.Parent.Controls.OfType<FlowLayoutPanel>().Single().Controls.OfType<Button>().Single(b=>b.Text=="Selecionar todos");all.PerformClick();if(large.CheckedItems.Count!=1||large.Items[1].Checked)return 116;busy=false;largeScanning=false;selectIncoming=false;int home=CheckHomeUi();if(home!=0)return home; PreviewPage(5);Application.DoEvents();
   if(UiChecks.ContainsText(this,"CUIDE DO SEU WINDOWS"))return 30;
   if(!apps.CheckBoxes||apps.Items.Count!=6)return 31;
   var protectedRow=apps.Items.Cast<ListViewItem>().First(i=>((AppEntry)i.Tag).Protected);protectedRow.Checked=true;Application.DoEvents();if(protectedRow.Checked||chosenApps.Count!=0)return 32;
