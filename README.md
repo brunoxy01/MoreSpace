@@ -12,8 +12,9 @@ Disco, arquivos, aplicativos e manutenção do Windows em um utilitário portát
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011%20x64-216956?style=for-the-badge)](#começar)
 [![Release](https://img.shields.io/github/v/release/brunoxy01/MoreSpace?style=for-the-badge&color=216956)](https://github.com/brunoxy01/MoreSpace/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/brunoxy01/MoreSpace/total?style=for-the-badge&color=216956&label=downloads)](https://github.com/brunoxy01/MoreSpace/releases)
+<br>
 [![Baixar última versão](https://img.shields.io/badge/BAIXAR-%C3%BAltima%20vers%C3%A3o%20.exe-216956?style=for-the-badge&logo=windows)](https://github.com/brunoxy01/MoreSpace/releases/latest/download/MoreSpace.exe)
-[![Build](https://github.com/brunoxy01/MoreSpace/actions/workflows/build.yml/badge.svg)](https://github.com/brunoxy01/MoreSpace/actions/workflows/build.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/brunoxy01/MoreSpace/build.yml?branch=main&style=for-the-badge&label=build)](https://github.com/brunoxy01/MoreSpace/actions/workflows/build.yml)
 
 **[Baixar para Windows](https://github.com/brunoxy01/MoreSpace/releases/latest/download/MoreSpace.exe)** · [Ver versões](https://github.com/brunoxy01/MoreSpace/releases) · [Recursos e limites](docs/FEATURES.md) · [Relatar problema](https://github.com/brunoxy01/MoreSpace/issues/new/choose)
 
